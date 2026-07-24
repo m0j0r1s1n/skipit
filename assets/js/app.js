@@ -1,239 +1,165 @@
-// SkipIt booking system
+document.addEventListener("DOMContentLoaded", function () {
 
-const rates = {
-    "Mini Trailer": 40,
-    "Standard Trailer": 60,
-    "Maxi Trailer": 85
-};
+    console.log("SkipIt JS loaded");
 
 
-// Select trailer from pricing cards
+    // Trailer buttons
 
-function chooseTrailer(name) {
+    window.chooseTrailer = function(trailer) {
 
-    const select = document.getElementById("trailer");
+        const select = document.getElementById("trailer");
 
-    if(select) {
+        if(select){
+            select.value = trailer;
+        }
 
-        select.value = name;
+        const booking = document.getElementById("booking");
 
-        document
-        .getElementById("booking")
-        .scrollIntoView({
-            behavior:"smooth"
-        });
+        if(booking){
+            booking.scrollIntoView({
+                behavior:"smooth"
+            });
+        }
+
+    };
+
+
+    // Price calculator
+
+    const start = document.getElementById("startDate");
+    const end = document.getElementById("endDate");
+    const estimate = document.getElementById("estimate");
+
+
+    function calculatePrice(){
+
+        if(!start || !end || !estimate){
+            return;
+        }
+
+
+        if(!start.value || !end.value){
+
+            estimate.textContent="£0";
+            return;
+
+        }
+
+
+        const startDate = new Date(start.value);
+        const endDate = new Date(end.value);
+
+
+        const difference =
+        Math.ceil(
+            (endDate-startDate)
+            /(1000*60*60*24)
+        );
+
+
+        if(difference <=0){
+
+            estimate.textContent="£0";
+            return;
+
+        }
+
+
+        const prices = {
+
+            "Mini Trailer":40,
+            "Standard Trailer":60,
+            "Maxi Trailer":90
+
+        };
+
+
+        const trailer =
+        document.getElementById("trailer");
+
+
+        let price = 0;
+
+
+        if(trailer && prices[trailer.value]){
+
+            price = prices[trailer.value];
+
+        }
+
+
+        estimate.textContent =
+        "£" + (difference * price);
+
 
     }
 
-}
 
 
+    if(start){
+        start.addEventListener(
+            "change",
+            calculatePrice
+        );
+    }
 
-// Calculate hire cost
 
-function calculatePrice() {
+    if(end){
+        end.addEventListener(
+            "change",
+            calculatePrice
+        );
+    }
 
 
     const trailer =
-    document.getElementById("trailer").value;
+    document.getElementById("trailer");
 
 
-    const start =
-    new Date(document.getElementById("startDate").value);
+    if(trailer){
 
-
-    const end =
-    new Date(document.getElementById("endDate").value);
-
-
-
-    if(!trailer || isNaN(start) || isNaN(end)) {
-
-        document.getElementById("estimate").innerHTML="£0";
-
-        return;
+        trailer.addEventListener(
+            "change",
+            calculatePrice
+        );
 
     }
 
 
 
-    const difference =
-    end - start;
+    // Booking form
+
+    const form =
+    document.getElementById("bookingForm");
 
 
-    const days =
-    Math.ceil(
-        difference /
-        (1000 * 60 * 60 * 24)
-    );
+    const success =
+    document.getElementById("success");
 
 
+    if(form){
 
-    if(days <= 0) {
+        form.addEventListener(
+            "submit",
+            function(e){
 
-        document.getElementById("estimate").innerHTML=
-        "Invalid dates";
+                e.preventDefault();
 
-        return;
+
+                form.style.display="none";
+
+
+                if(success){
+
+                    success.style.display="block";
+
+                }
+
+
+            }
+        );
 
     }
-
-
-
-    const total =
-    days * rates[trailer];
-
-
-
-    document.getElementById("estimate").innerHTML =
-    "£" + total;
-
-
-}
-
-
-
-// Watch booking fields
-
-
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
-
-
-const fields = [
-
-"trailer",
-"startDate",
-"endDate"
-
-];
-
-
-fields.forEach(id=>{
-
-
-const element =
-document.getElementById(id);
-
-
-if(element){
-
-element.addEventListener(
-"change",
-calculatePrice
-);
-
-}
-
-
-});
-
-
-
-const form =
-document.getElementById("bookingForm");
-
-
-
-if(form){
-
-
-form.addEventListener(
-"submit",
-function(event){
-
-
-event.preventDefault();
-
-
-
-const name =
-document.getElementById("name").value;
-
-
-const phone =
-document.getElementById("phone").value;
-
-
-const email =
-document.getElementById("email").value;
-
-
-const trailer =
-document.getElementById("trailer").value;
-
-
-const start =
-document.getElementById("startDate").value;
-
-
-const end =
-document.getElementById("endDate").value;
-
-
-const waste =
-document.getElementById("waste").value;
-
-
-const address =
-document.getElementById("address").value;
-
-
-
-const subject =
-encodeURIComponent(
-"SkipIt Booking Request"
-);
-
-
-
-const body =
-encodeURIComponent(
-
-`
-New SkipIt booking request
-
-Name:
-${name}
-
-Phone:
-${phone}
-
-Email:
-${email}
-
-Trailer:
-${trailer}
-
-Dates:
-${start} to ${end}
-
-Waste:
-${waste}
-
-Address:
-${address}
-
-`
-
-);
-
-
-
-window.location.href =
-`mailto:hello@skipit.work?subject=${subject}&body=${body}`;
-
-
-
-document.getElementById("success")
-.style.display="block";
-
-
-});
-
-
-}
 
 
 });
