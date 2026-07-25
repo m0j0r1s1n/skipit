@@ -358,202 +358,192 @@ Asbestos, chemicals, liquids, gas bottles, clinical waste or hazardous materials
 
 <div class="booking-text">
 
-<h2>
-Book your SkipIt trailer
-</h2>
+<h2>Book or get a quote</h2>
 
-<p>
-Choose your trailer, select your dates and send us your booking request.
-We will confirm availability before delivery.
-</p>
-
+<p>Choose your trailer and dates for an instant price estimate. We confirm the final price within the hour.</p>
 
 <div class="trust">
-
-<div>
-<strong>✓ Licensed</strong>
-<span>Upper Tier Waste Carrier</span>
+  <div><strong>✓ Licensed</strong><span>Upper Tier Waste Carrier</span></div>
+  <div><strong>✓ Instant estimate</strong><span>Final price confirmed by us</span></div>
+  <div><strong>✓ Local</strong><span>Greater Belfast service</span></div>
+  <div><strong>✓ Fast response</strong><span>Confirmed within the hour</span></div>
 </div>
 
-
-<div>
-<strong>✓ Recycling</strong>
-<span>Responsible disposal</span>
-</div>
-
-
-<div>
-<strong>✓ Local</strong>
-<span>Greater Belfast service</span>
-</div>
-
-
+<div class="wa-direct">
+  <p>Prefer to talk first?</p>
+  <a class="wa-big-btn" href="https://wa.me/447494110411?text=Hi%20SkipIt%2C%20I%27d%20like%20to%20book%20a%20trailer." target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="white" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill="white" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.306A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+    WhatsApp Us Now
+  </a>
 </div>
 
 </div>
-
-
 
 <div class="booking-box">
 
+  <!-- TABS -->
+  <div class="form-tabs">
+    <button class="ftab active" onclick="switchTab('book', this)">📅 Book a Trailer</button>
+    <button class="ftab" onclick="switchTab('quote', this)">💬 Get a Quote</button>
+  </div>
 
-<form id="bookingForm">
+  <!-- BOOKING TAB -->
+  <div id="tab-book">
+    <form id="bookingForm" action="https://formspree.io/f/maqrlqar" method="POST" onsubmit="handleBooking(event)">
+      <input type="hidden" name="_subject" value="New SkipIt Booking" />
+      <input type="hidden" name="form_type" value="booking" />
 
+      <div class="form-row">
+        <div>
+          <label>First Name</label>
+          <input type="text" name="first_name" id="firstName" placeholder="John" required />
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input type="text" name="last_name" id="lastName" placeholder="Smith" required />
+        </div>
+      </div>
 
-<label>
-Name
-</label>
+      <div class="form-row">
+        <div>
+          <label>Phone</label>
+          <input type="tel" name="phone" id="phone" placeholder="07xxx xxxxxx" required />
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="email" name="email" id="email" placeholder="you@example.com" required />
+        </div>
+      </div>
 
-<input 
-type="text"
-id="name"
-placeholder="Your name"
-required>
+      <label>Trailer Size</label>
+      <select id="trailer" name="trailer" required onchange="calculatePrice()">
+        <option value="">Select trailer…</option>
+        <option value="Mini Trailer">Mini Trailer — £40/day</option>
+        <option value="Standard Trailer">Standard Trailer — £60/day</option>
+        <option value="Maxi Trailer">Maxi Trailer — £90/day</option>
+      </select>
 
+      <label>Delivery Address</label>
+      <input type="text" name="address" id="address" placeholder="12 Main Street, Belfast, BT1 1AA" required />
 
+      <div class="form-row">
+        <div>
+          <label>Drop-off Date</label>
+          <input type="date" name="dropoff_date" id="startDate" required onchange="calculatePrice()" />
+        </div>
+        <div>
+          <label>Collection Date</label>
+          <input type="date" name="collection_date" id="endDate" required onchange="calculatePrice()" />
+        </div>
+      </div>
 
-<label>
-Phone
-</label>
+      <label>Type of Waste</label>
+      <select name="waste_type" id="waste">
+        <option value="">What are you loading?</option>
+        <option>Building rubble</option>
+        <option>Garden waste</option>
+        <option>House clearance</option>
+        <option>Mixed construction waste</option>
+        <option>Other</option>
+      </select>
 
-<input 
-type="tel"
-id="phone"
-placeholder="07xxx xxxxxx"
-required>
+      <input type="hidden" name="estimated_total" id="hiddenEstimate" />
 
+      <div class="estimate" id="estimateBox" style="display:none">
+        <div>
+          <span>Estimated total</span>
+          <small id="estimateBreak"></small>
+        </div>
+        <strong id="estimate">£0</strong>
+      </div>
+      <p class="estimate-note" id="estimateNote" style="display:none">Estimate only — we'll confirm your final price within the hour.</p>
 
+      <button type="submit" class="button" id="bookBtn" style="width:100%;margin-top:15px">Send Booking Request</button>
+    </form>
 
-<label>
-Email
-</label>
+    <div id="success" class="success" style="display:none">
+      <h3>✅ Booking Request Sent!</h3>
+      <p>We'll confirm your trailer, dates and final price within the hour.</p>
+      <a id="waConfirmBtn" href="#" class="wa-big-btn" target="_blank" rel="noopener" style="margin-top:15px;display:flex">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="white" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill="white" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.306A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+        Also message us on WhatsApp
+      </a>
+    </div>
+  </div>
 
-<input
-type="email"
-id="email"
-placeholder="you@example.com"
-required>
+  <!-- QUOTE TAB -->
+  <div id="tab-quote" style="display:none">
+    <p style="color:var(--grey);margin-bottom:15px;font-size:0.9rem">Not sure what size you need? Tell us about the job and we'll send a tailored quote — usually within 2 hours.</p>
+    <form id="quoteForm" action="https://formspree.io/f/maqrlqar" method="POST" onsubmit="handleQuote(event)">
+      <input type="hidden" name="_subject" value="New SkipIt Quote Request" />
+      <input type="hidden" name="form_type" value="quote" />
 
+      <div class="form-row">
+        <div>
+          <label>First Name</label>
+          <input type="text" name="first_name" placeholder="John" required />
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input type="text" name="last_name" placeholder="Smith" required />
+        </div>
+      </div>
 
+      <div class="form-row">
+        <div>
+          <label>Phone</label>
+          <input type="tel" name="phone" placeholder="07xxx xxxxxx" required />
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="email" name="email" placeholder="you@example.com" required />
+        </div>
+      </div>
 
-<label>
-Trailer size
-</label>
+      <label>Postcode / Area</label>
+      <input type="text" name="postcode" placeholder="BT1 1AA" required />
 
-<select id="trailer" required>
+      <label>Type of Waste</label>
+      <select name="waste_type" required>
+        <option value="">What are you clearing?</option>
+        <option>Building rubble</option>
+        <option>Garden waste</option>
+        <option>House clearance</option>
+        <option>Mixed construction waste</option>
+        <option>Mix of the above</option>
+        <option>Not sure yet</option>
+      </select>
 
-<option value="">
-Select trailer
-</option>
+      <label>Rough Volume</label>
+      <select name="volume">
+        <option value="">How much roughly?</option>
+        <option>Small — a car boot's worth</option>
+        <option>Medium — a van load</option>
+        <option>Large — a full room clearance</option>
+        <option>Very large — whole house or site</option>
+        <option>Not sure</option>
+      </select>
 
-<option value="Mini Trailer">
-Mini Trailer
-</option>
+      <label>When do you need it?</label>
+      <select name="urgency">
+        <option value="">Timeframe…</option>
+        <option>As soon as possible</option>
+        <option>Within the next week</option>
+        <option>Within 2–4 weeks</option>
+        <option>Just planning ahead</option>
+      </select>
 
-<option value="Standard Trailer">
-Standard Trailer
-</option>
+      <label>Any other details?</label>
+      <textarea name="details" placeholder="Access restrictions, specific items, anything helpful…"></textarea>
 
-<option value="Maxi Trailer">
-Maxi Trailer
-</option>
+      <button type="submit" class="button" id="quoteBtn" style="width:100%;margin-top:15px">Request a Quote</button>
+    </form>
 
-</select>
-
-
-
-<label>
-Drop-off date
-</label>
-
-<input
-type="date"
-id="startDate"
-required>
-
-
-
-<label>
-Collection date
-</label>
-
-<input
-type="date"
-id="endDate"
-required>
-
-
-
-<label>
-Waste type
-</label>
-
-
-<select id="waste">
-
-<option>
-Building rubble
-</option>
-
-<option>
-Garden waste
-</option>
-
-<option>
-House clearance
-</option>
-
-<option>
-Mixed construction waste
-</option>
-
-<option>
-Other
-</option>
-
-</select>
-
-
-
-<label>
-Address
-</label>
-
-<textarea
-id="address"
-placeholder="Delivery address"
-required></textarea>
-
-
-
-<div class="estimate">
-
-Estimated hire:
-<strong id="estimate">
-£0
-</strong>
-
-</div>
-
-
-
-<button type="submit" class="button">
-
-Send Booking Request
-
-</button>
-
-
-</form>
-
-
-<div id="success" class="success">
-
-Thanks! Your booking request has been sent.
-We will contact you shortly.
-
-</div>
-
+    <div id="quoteSuccess" class="success" style="display:none">
+      <h3>✅ Quote Request Received!</h3>
+      <p>We'll send your personalised quote within 2 hours. Talk soon!</p>
+    </div>
+  </div>
 
 </div>
 
@@ -668,17 +658,12 @@ hello@skipit.work
 
 
 <p class="copyright">
-
-© 2026 SkipIt. All rights reserved.
-
+© 2026 SkipIt. All rights reserved. &nbsp;&nbsp; <a href="" style="opacity:0.4;font-size:0.8rem"></a>
 </p>
-
 
 </footer>
 
-
-
-<script src="/assets/js/app.js"></script>
+<script src="/assets/js/app.js"></script
 
 
 </body>
