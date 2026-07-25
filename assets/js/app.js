@@ -56,25 +56,43 @@ window.calculatePrice = function () {
     return;
   }
 
-  let dailyRate = 0;
-  if (trailer.includes("Mini")) dailyRate = 140;
-  else if (trailer.includes("Standard")) dailyRate = 220;
-  else if (trailer.includes("Maxi")) dailyRate = 310;
+  let total = 0;
+  let packageLabel = "";
+  let dayCount = 1;
 
   const start = new Date(startDate);
   const end = new Date(endDate);
   const diffTime = Math.abs(end - start);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-  if (isNaN(diffDays) || diffDays <= 0) {
+  if (!Number.isNaN(diffDays) && diffDays > 0) {
+    dayCount = diffDays;
+  }
+
+  if (trailer.includes("Small")) {
+    total = 120 + Math.max(0, dayCount - 1) * 25;
+    packageLabel = `Small Load — ${dayCount} day${dayCount > 1 ? "s" : ""}`;
+  } else if (trailer.includes("Standard")) {
+    total = 150 * dayCount;
+    packageLabel = `Standard Trailer Skip — ${dayCount} day${dayCount > 1 ? "s" : ""} @ £150–£175/day`;
+  } else if (trailer.includes("Heavy")) {
+    total = 200 * dayCount;
+    packageLabel = `Heavy Waste Package — ${dayCount} day${dayCount > 1 ? "s" : ""} @ £200–£225/day`;
+  } else if (trailer.includes("Trade")) {
+    total = 350;
+    packageLabel = "Trade Account — weekly rate";
+  } else if (trailer.includes("Jobs")) {
+    total = 750;
+    packageLabel = "5 Jobs Bundle — prepaid";
+  }
+
+  if (!total) {
     if (estimateBox) estimateBox.style.display = "none";
     return;
   }
 
-  const total = dailyRate * diffDays;
-
   if (estimateEl) estimateEl.textContent = `£${total}`;
-  if (breakEl) breakEl.textContent = `${diffDays} day(s) @ £${dailyRate}/day`;
+  if (breakEl) breakEl.textContent = packageLabel;
   if (hiddenEstimate) hiddenEstimate.value = `£${total}`;
   if (estimateBox) estimateBox.style.display = "flex";
   if (estimateNote) estimateNote.style.display = "block";
