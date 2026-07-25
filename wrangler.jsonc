@@ -1,5 +1,7 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "skipit",
+  "main": "index.js",
+  "compatibility_date": "2026-07-25",
   "assets": {
     "directory": "./",
     "binding": "ASSETS"
