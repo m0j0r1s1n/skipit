@@ -70,13 +70,13 @@ window.calculatePrice = function () {
   }
 
   if (trailer.includes("Small")) {
-    total = 120 + Math.max(0, dayCount - 1) * 25;
+    total = 120 + Math.max(0, dayCount - 1) * 60;
     packageLabel = `Small Load — ${dayCount} day${dayCount > 1 ? "s" : ""}`;
   } else if (trailer.includes("Standard")) {
-    total = 150 * dayCount;
+    total = 150 + Math.max(0, dayCount - 1) * 75;
     packageLabel = `Standard Trailer Skip — ${dayCount} day${dayCount > 1 ? "s" : ""} @ £150–£175/day`;
   } else if (trailer.includes("Heavy")) {
-    total = 200 * dayCount;
+    total = 200 + Math.max(0, dayCount - 1) * 100;
     packageLabel = `Heavy Waste Package — ${dayCount} day${dayCount > 1 ? "s" : ""} @ £200–£225/day`;
   } else if (trailer.includes("Trade")) {
     total = 350;
