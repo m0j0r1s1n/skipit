@@ -20,10 +20,31 @@ document.addEventListener("DOMContentLoaded", function () {
   const trailerEl = document.getElementById("trailer");
   if (trailerEl) trailerEl.addEventListener("change", calculatePrice);
 
-  // ── Pricing card → booking scroll + pre-select ───────────────────────────
+  // ── Pricing card → booking tab scroll + pre-select ───────────────────────
   window.chooseTrailer = function(name) {
+    // Make sure we are on the 'Book' tab
+    const bookTabBtn = document.querySelectorAll(".ftab")[0];
+    if (bookTabBtn) window.switchTab("book", bookTabBtn);
+
     const sel = document.getElementById("trailer");
     if (sel) { sel.value = name; calculatePrice(); }
+    const sec = document.getElementById("booking");
+    if (sec) sec.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // ── Get a Quote button trigger ───────────────────────────────────────────
+  window.requestQuote = function(wasteType) {
+    // Switch to the 'Quote' tab
+    const quoteTabBtn = document.querySelectorAll(".ftab")[1];
+    if (quoteTabBtn) window.switchTab("quote", quoteTabBtn);
+
+    // Optional: Pre-select waste type if passed in
+    if (wasteType) {
+      const select = document.querySelector("#quoteForm select[name=waste_type]");
+      if (select) select.value = wasteType;
+    }
+
+    // Smooth scroll down to the quote box
     const sec = document.getElementById("booking");
     if (sec) sec.scrollIntoView({ behavior: "smooth" });
   };

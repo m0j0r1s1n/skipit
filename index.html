@@ -67,9 +67,10 @@ Skip<span>It</span>
 <li><a href="#contact">Contact</a></li>
 </ul>
 
-<a class="button" href="#booking">
-Book Now
-</a>
+<div style="display:flex; gap:10px;">
+  <button class="button secondary" onclick="requestQuote()">Get a Quote</button>
+  <a class="button" href="#booking">Book Now</a>
+</div>
 
 </nav>
 
@@ -102,9 +103,9 @@ recycling facility.
 Book a Trailer
 </a>
 
-<a href="#pricing" class="button secondary">
-View Prices
-</a>
+<button onclick="requestQuote()" class="button secondary">
+Get a Quote
+</button>
 
 </div>
 
@@ -173,57 +174,121 @@ How SkipIt Works
 
 
 <!-- PRICING -->
+
 <section id="pricing" class="section">
-  <h2>Simple all-inclusive pricing</h2>
-  <p class="intro">
-    Includes delivery, collection, and licensed waste tipping & disposal.
-  </p>
 
-  <div class="cards">
-    <!-- MINI -->
-    <div class="card">
-      <h3>Mini Trailer</h3>
-      <p class="size">6×4 ft trailer</p>
-      <h4>£140 <span>/load</span></h4>
-      <ul>
-        <li>Garden waste</li>
-        <li>Small clearances</li>
-        <li>Light rubble</li>
-        <li>Delivery & disposal included</li>
-      </ul>
-      <button class="button" onclick="chooseTrailer('Mini Trailer')">Book Mini</button>
-    </div>
+<h2>
+Simple daily pricing
+</h2>
 
-    <!-- STANDARD -->
-    <div class="card featured">
-      <div class="tag">Most Popular</div>
-      <h3>Standard Trailer</h3>
-      <p class="size">8×5 ft trailer</p>
-      <h4>£220 <span>/load</span></h4>
-      <ul>
-        <li>Building waste</li>
-        <li>Mixed waste</li>
-        <li>Renovations</li>
-        <li>Kitchen & bathroom work</li>
-      </ul>
-      <button class="button" onclick="chooseTrailer('Standard Trailer')">Book Standard</button>
-    </div>
+<p class="intro">
+No complicated skip hire charges. Pay for the trailer days you need.
+</p>
 
-    <!-- MAXI -->
-    <div class="card">
-      <h3>Maxi Trailer</h3>
-      <p class="size">10×6 ft trailer</p>
-      <h4>£310 <span>/load</span></h4>
-      <ul>
-        <li>Large projects</li>
-        <li>Extensions</li>
-        <li>Demolition waste</li>
-        <li>Trade customers</li>
-      </ul>
-      <button class="button" onclick="chooseTrailer('Maxi Trailer')">Book Maxi</button>
-    </div>
-  </div>
+
+<div class="cards">
+
+
+<div class="card">
+
+<h3>
+Mini Trailer
+</h3>
+
+<p class="size">
+6×4 ft trailer
+</p>
+
+<h4>
+£140 <span>/day</span>
+</h4>
+
+<ul>
+<li>Garden waste</li>
+<li>Small clearances</li>
+<li>Light rubble</li>
+<li>Delivery included</li>
+</ul>
+
+<button onclick="chooseTrailer('Mini Trailer')">
+Book Mini
+</button>
+
+</div>
+
+
+
+<div class="card featured">
+
+<div class="tag">
+Most Popular
+</div>
+
+
+<h3>
+Standard Trailer
+</h3>
+
+<p class="size">
+8×5 ft trailer
+</p>
+
+<h4>
+£220 <span>/day</span>
+</h4>
+
+<ul>
+<li>Building waste</li>
+<li>Mixed waste</li>
+<li>Renovations</li>
+<li>Kitchen & bathroom work</li>
+</ul>
+
+
+<button onclick="chooseTrailer('Standard Trailer')">
+Book Standard
+</button>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h3>
+Maxi Trailer
+</h3>
+
+<p class="size">
+10×6 ft trailer
+</p>
+
+<h4>
+£310 <span>/day</span>
+</h4>
+
+
+<ul>
+<li>Large projects</li>
+<li>Extensions</li>
+<li>Demolition waste</li>
+<li>Trade customers</li>
+</ul>
+
+
+<button onclick="chooseTrailer('Maxi Trailer')">
+Book Maxi
+</button>
+
+
+</div>
+
+
+</div>
+
 </section>
+
 
 
 
@@ -351,13 +416,13 @@ Asbestos, chemicals, liquids, gas bottles, clinical waste or hazardous materials
         </div>
       </div>
 
-<label>Trailer Size</label>
-<select id="trailer" name="trailer" required onchange="calculatePrice()">
-  <option value="">Select trailer…</option>
-  <option value="Mini Trailer">Mini Trailer — £140/load</option>
-  <option value="Standard Trailer">Standard Trailer — £220/load</option>
-  <option value="Maxi Trailer">Maxi Trailer — £310/load</option>
-</select>
+      <label>Trailer Size</label>
+      <select id="trailer" name="trailer" required onchange="calculatePrice()">
+        <option value="">Select trailer…</option>
+        <option value="Mini Trailer">Mini Trailer — £140/day</option>
+        <option value="Standard Trailer">Standard Trailer — £220/day</option>
+        <option value="Maxi Trailer">Maxi Trailer — £310/day</option>
+      </select>
 
       <label>Delivery Address</label>
       <input type="text" name="address" id="address" placeholder="12 Main Street, Belfast, BT1 1AA" required />
@@ -600,5 +665,6 @@ hello@skipit.work
 </footer>
 
 <script src="/assets/js/app.js"></script>
+
 </body>
 </html>
