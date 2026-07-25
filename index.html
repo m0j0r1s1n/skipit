@@ -31,10 +31,10 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:image" content="https://skipit.work/assets/images/og-image.png">
-<link rel="image_src" href="/assets/images/og-image.png">
-<link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
-<link rel="preload" href="/assets/css/style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="/assets/css/style.min.css"></noscript>
+<link rel="image_src" href="assets/images/og-image.png">
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+<link rel="preload" href="assets/css/style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="assets/css/style.min.css"></noscript>
 
 <script type="application/ld+json">
 {
@@ -212,48 +212,78 @@
 
 <!-- PRICING -->
 <section id="pricing" class="section">
-  <h2>Simple daily pricing</h2>
-  <p class="intro">No complicated skip hire charges. Pay for the trailer days you need.</p>
+  <h2>Trailer Skip packages pricing</h2>
+  <p class="intro">Choose a package that suits your job, from small household clear-outs to regular contractor work.</p>
 
   <div class="cards">
     <div class="card">
-      <h3>Mini Trailer</h3>
-      <p class="size">6×4 ft trailer</p>
-      <h4>£140 <span>/day</span></h4>
+      <h3>🟢 Small Load</h3>
+      <p class="size">Garden waste / household clear-outs</p>
+      <p class="size" style="margin-top:6px; font-weight:600; color:var(--orange);">No job too small</p>
+      <h4>£120</h4>
       <ul>
-        <li>Garden waste</li>
-        <li>Small clearances</li>
-        <li>Light rubble</li>
-        <li>Delivery included</li>
+        <li>Drop trailer</li>
+        <li>Customer fills</li>
+        <li>Collect next day</li>
       </ul>
-      <button onclick="chooseTrailer('Mini Trailer')">Book Mini</button>
+      <button onclick="chooseTrailer('Small Load')">Book Small Load</button>
     </div>
 
     <div class="card featured">
       <div class="tag">Most Popular</div>
-      <h3>Standard Trailer</h3>
-      <p class="size">8×5 ft trailer</p>
-      <h4>£220 <span>/day</span></h4>
+      <h3>🔵 Standard Trailer Skip</h3>
+      <p class="size">Most popular</p>
+      <h4>£150–£175 <span>/day</span></h4>
       <ul>
-        <li>Building waste</li>
-        <li>Mixed waste</li>
-        <li>Renovations</li>
-        <li>Kitchen & bathroom work</li>
+        <li>Up to 7 days hire</li>
+        <li>Collection included</li>
+        <li>Mixed waste allowed (within limits)</li>
+        <li>Time and price negotiable</li>
       </ul>
-      <button onclick="chooseTrailer('Standard Trailer')">Book Standard</button>
+      <button onclick="chooseTrailer('Standard Trailer Skip')">Book Standard</button>
     </div>
 
     <div class="card">
-      <h3>Maxi Trailer</h3>
-      <p class="size">10×6 ft trailer</p>
-      <h4>£310 <span>/day</span></h4>
+      <h3>🔴 Heavy Waste Package</h3>
+      <p class="size">Builders rubble, soil, tiles</p>
+      <h4>£200–£225 <span>/day</span></h4>
       <ul>
-        <li>Large projects</li>
-        <li>Extensions</li>
-        <li>Demolition waste</li>
-        <li>Trade customers</li>
+        <li>Limited weight</li>
+        <li>Extra disposal fees included</li>
+        <li>Time and price negotiable</li>
       </ul>
-      <button onclick="chooseTrailer('Maxi Trailer')">Book Maxi</button>
+      <button onclick="chooseTrailer('Heavy Waste Package')">Book Heavy Waste</button>
+    </div>
+  </div>
+
+  <div style="margin-top:45px;">
+    <h3>Weekly contractor deal</h3>
+    <p class="intro" style="margin-bottom:30px;">For builders, landscapers and landlords.</p>
+
+    <div class="cards" style="grid-template-columns:repeat(2, minmax(0, 1fr)); max-width:760px; margin:0 auto;">
+      <div class="card">
+        <h3>Trade Account</h3>
+        <h4>£350 <span>/week</span></h4>
+        <ul>
+          <li>Trailer left on site</li>
+          <li>Multiple collections</li>
+          <li>Priority service</li>
+        </ul>
+        <button onclick="chooseTrailer('Trade Account')">Book Trade Account</button>
+      </div>
+
+      <div class="card featured">
+        <div class="tag">Best Value</div>
+        <h3>5 Jobs Bundle</h3>
+        <h4>£750</h4>
+        <p class="size">£150/job</p>
+        <ul>
+          <li>Prepaid bundle</li>
+          <li>Flexible scheduling</li>
+          <li>Great for repeat work</li>
+        </ul>
+        <button onclick="chooseTrailer('5 Jobs Bundle')">Book Bundle</button>
+      </div>
     </div>
   </div>
 </section>
@@ -344,12 +374,14 @@
           </div>
         </div>
 
-        <label>Trailer Size</label>
+        <label>Package</label>
         <select id="trailer" name="trailer" required onchange="calculatePrice()">
-          <option value="">Select trailer…</option>
-          <option value="Mini Trailer">Mini Trailer — £140/day</option>
-          <option value="Standard Trailer">Standard Trailer — £220/day</option>
-          <option value="Maxi Trailer">Maxi Trailer — £310/day</option>
+          <option value="">Select package…</option>
+          <option value="Small Load">Small Load — £120</option>
+          <option value="Standard Trailer Skip">Standard Trailer Skip — £150–£175/day</option>
+          <option value="Heavy Waste Package">Heavy Waste Package — £200–£225/day</option>
+          <option value="Trade Account">Trade Account — £350/week</option>
+          <option value="5 Jobs Bundle">5 Jobs Bundle — £750</option>
         </select>
 
         <label>Delivery Address</label>
@@ -510,7 +542,7 @@
   <p class="copyright">© 2026 SkipIt. All rights reserved.</p>
 </footer>
 
-<script src="/assets/js/app.min.js" defer></script>
+<script src="assets/js/app.js" defer></script>
 
 </body>
 </html>
