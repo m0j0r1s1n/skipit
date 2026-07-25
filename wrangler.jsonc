@@ -1,12 +1,22 @@
 {
-  "name": "skipit",
-  "main": "index.js",
-  "compatibility_date": "2026-07-25",
-  "assets": {
-    "directory": "./",
-    "binding": "ASSETS"
-  },
-  "secrets": {
-    "required": ["ADMIN_PASSWORD"]
-  }
+	"name": "skipit",
+	"main": "index.js",
+	"compatibility_date": "2026-07-25",
+	"assets": {
+		"directory": "./",
+		"binding": "ASSETS"
+	},
+	"secrets": {
+		"required": [
+			"ADMIN_PASSWORD"
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "skipit_db",
+			"database_name": "skipit-db",
+			"database_id": "bff458b4-b072-4e6c-b1ff-5f2afc4231e5",
+			"remote": true
+		}
+	]
 }
