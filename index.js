@@ -2,7 +2,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-   // 1. Sitemap Endpoint for Search Engines
+    // 1. Sitemap Endpoint for Search Engines (Fixed Namespace)
     if (url.pathname === "/sitemap.xml") {
       const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
