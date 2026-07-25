@@ -1,6 +1,6 @@
-// ─── CONFIG ──────────────────────────────────────────────────────────────────
-const WA_NUMBER  = "447494110411";
-const ADMIN_PASS = "n@3tn5Wv@x^qoj";
+// ─── CONFIG — update these ────────────────────────────────────────────────────
+const WA_NUMBER   = "447494110411";   // Your WhatsApp number, no + or spaces
+const ADMIN_PASS  = "n@3tn5Wv@x^qoj"; // Change this password before going live
 
 const RATES = {
   "Mini Trailer":     140,
@@ -28,7 +28,6 @@ window.switchTab = function(tabName) {
 };
 
 window.requestQuote = function(wasteType) {
-  // Switch to quote form
   window.switchTab("quote");
 
   if (wasteType) {
@@ -36,7 +35,6 @@ window.requestQuote = function(wasteType) {
     if (select) select.value = wasteType;
   }
 
-  // Scroll to booking/quote section
   const sec = document.getElementById("booking");
   if (sec) sec.scrollIntoView({ behavior: "smooth" });
 };
@@ -100,26 +98,26 @@ function updateWALink(trailer, days, price, dropoff, collect) {
   btn.href = "https://wa.me/" + WA_NUMBER + "?text=" + msg;
 }
 
-// ── 3. FORM HANDLERS ──────────────────────────────────────────────────────────
+// ── 3. FORM SUBMISSION HANDLERS ───────────────────────────────────────────────
 window.handleBooking = function(e) {
   e.preventDefault();
   const btn = document.getElementById("bookBtn");
-  btn.textContent = "Sending…"; btn.disabled = true;
+  if (btn) { btn.textContent = "Sending…"; btn.disabled = true; }
 
   const trailer  = document.getElementById("trailer")?.value;
   const dropoff  = document.getElementById("startDate")?.value;
   const collect  = document.getElementById("endDate")?.value;
   const days     = Math.ceil((new Date(collect) - new Date(dropoff)) / 86400000);
-  const price    = (RATES[trailer] || 0) * days;
+  const price    = (RATES[trailer] || 0) * (days > 0 ? days : 1);
 
   const booking = {
-    type: "booking",
+    type:      "booking",
     firstName: document.getElementById("firstName")?.value,
     lastName:  document.getElementById("lastName")?.value,
     phone:     document.getElementById("phone")?.value,
     email:     document.getElementById("email")?.value,
-    trailer,
     address:   document.getElementById("address")?.value,
+    trailer,
     waste:     document.getElementById("waste")?.value,
     dropoff,
     collect,
@@ -145,7 +143,7 @@ window.handleBooking = function(e) {
 window.handleQuote = function(e) {
   e.preventDefault();
   const btn = document.getElementById("quoteBtn");
-  btn.textContent = "Sending…"; btn.disabled = true;
+  if (btn) { btn.textContent = "Sending…"; btn.disabled = true; }
 
   const form = document.getElementById("quoteForm");
   const fd   = new FormData(form);
@@ -156,7 +154,7 @@ window.handleQuote = function(e) {
     lastName:  form.querySelector("[name=last_name]")?.value,
     phone:     form.querySelector("[name=phone]")?.value,
     email:     form.querySelector("[name=email]")?.value,
-    postcode:  form.querySelector("[name=postcode]")?.value,
+    address:   form.querySelector("[name=address]")?.value || form.querySelector("[name=postcode]")?.value,
     waste:     form.querySelector("[name=waste_type]")?.value,
     volume:    form.querySelector("[name=volume]")?.value,
     urgency:   form.querySelector("[name=urgency]")?.value,
@@ -184,7 +182,7 @@ function saveData(key, data, prefix) {
   localStorage.setItem(key, JSON.stringify(list));
 }
 
-// ── 4. INITIALIZE DATES ON LOAD ───────────────────────────────────────────────
+// ── 4. INITIALIZE PAGE & ADMIN ────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", function () {
   const today = new Date().toISOString().split("T")[0];
   const startEl = document.getElementById("startDate");
@@ -200,4 +198,138 @@ document.addEventListener("DOMContentLoaded", function () {
     endEl.min = today;
     endEl.addEventListener("change", calculatePrice);
   }
+
+  // Admin page handler
+  if (document.getElementById("admin-panel")) {
+    initAdmin();
+  }
 });
+
+function initAdmin() {
+  const loginBox   = document.getElementById("login-box");
+  const dashboard  = document.getElementById("dashboard");
+  const loginForm  = document.getElementById("login-form");
+  const passInput  = document.getElementById("admin-pass");
+  const loginError = document.getElementById("login-error");
+
+  if (sessionStorage.getItem("skipit_admin") === "1") {
+    showDashboard();
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      if (passInput.value === ADMIN_PASS) {
+        sessionStorage.setItem("skipit_admin", "1");
+        showDashboard();
+      } else {
+        if (loginError) loginError.textContent = "Incorrect password.";
+        passInput.value = "";
+      }
+    });
+  }
+
+  window.adminLogout = function() {
+    sessionStorage.removeItem("skipit_admin");
+    if (loginBox) loginBox.style.display = "block";
+    if (dashboard) dashboard.style.display = "none";
+  };
+
+  window.clearData = function(type) {
+    if (!confirm("Delete all " + type + "? This cannot be undone.")) return;
+    localStorage.removeItem("skipit_" + type);
+    renderTables();
+  };
+
+  window.updateStatus = function(type, id, status) {
+    const key  = "skipit_" + type;
+    const list = JSON.parse(localStorage.getItem(key) || "[]");
+    const item = list.find(x => x.id === id);
+    if (item) {
+      item.status = status;
+      localStorage.setItem(key, JSON.stringify(list));
+      renderTables();
+    }
+  };
+
+  function showDashboard() {
+    if (loginBox)  loginBox.style.display  = "none";
+    if (dashboard) dashboard.style.display = "block";
+    renderTables();
+  }
+
+  function renderTables() {
+    const bookings = JSON.parse(localStorage.getItem("skipit_bookings") || "[]");
+    const quotes   = JSON.parse(localStorage.getItem("skipit_quotes")   || "[]");
+
+    const bCount = document.getElementById("booking-count");
+    const qCount = document.getElementById("quote-count");
+    const pCount = document.getElementById("pending-count");
+
+    if (bCount) bCount.textContent = bookings.length;
+    if (qCount) qCount.textContent = quotes.length;
+    if (pCount) pCount.textContent = [...bookings, ...quotes].filter(x => x.status === "Pending").length;
+
+    // BOOKINGS TABLE
+    const bTable = document.getElementById("bookings-table");
+    if (bTable) {
+      bTable.innerHTML = bookings.length ? `
+        <table>
+          <thead><tr>
+            <th>Ref</th><th>Name</th><th>Email</th><th>Phone</th>
+            <th>Address</th><th>Trailer</th><th>Dates</th><th>Est.</th><th>Status</th><th>Submitted</th>
+          </tr></thead>
+          <tbody>${bookings.map(b => `
+            <tr>
+              <td><code>${b.id}</code></td>
+              <td><strong>${b.firstName || ''} ${b.lastName || ''}</strong></td>
+              <td><a href="mailto:${b.email || ''}">${b.email || '-'}</a></td>
+              <td><a href="tel:${b.phone || ''}">${b.phone || '-'}</a></td>
+              <td>${b.address || '-'}</td>
+              <td>${b.trailer || '-'}</td>
+              <td>${b.dropoff || '-'} to ${b.collect || '-'}</td>
+              <td><strong>${b.estimate || '-'}</strong></td>
+              <td>
+                <select onchange="updateStatus('bookings','${b.id}',this.value)">
+                  ${["Pending","Confirmed","Collected","Cancelled"].map(s =>
+                    `<option${b.status===s?" selected":""}>${s}</option>`).join("")}
+                </select>
+              </td>
+              <td style="font-size:0.75rem;color:#888">${b.submitted}</td>
+            </tr>`).join("")}
+          </tbody>
+        </table>` : "<p style='padding:15px;color:#888'>No bookings yet.</p>";
+    }
+
+    // QUOTES TABLE
+    const qTable = document.getElementById("quotes-table");
+    if (qTable) {
+      qTable.innerHTML = quotes.length ? `
+        <table>
+          <thead><tr>
+            <th>Ref</th><th>Name</th><th>Email</th><th>Phone</th>
+            <th>Address / Postcode</th><th>Waste</th><th>Volume</th><th>Urgency</th><th>Status</th><th>Submitted</th>
+          </tr></thead>
+          <tbody>${quotes.map(q => `
+            <tr>
+              <td><code>${q.id}</code></td>
+              <td><strong>${q.firstName || ''} ${q.lastName || ''}</strong></td>
+              <td><a href="mailto:${q.email || ''}">${q.email || '-'}</a></td>
+              <td><a href="tel:${q.phone || ''}">${q.phone || '-'}</a></td>
+              <td>${q.address || '-'}</td>
+              <td>${q.waste || '-'}</td>
+              <td>${q.volume || '—'}</td>
+              <td>${q.urgency || '—'}</td>
+              <td>
+                <select onchange="updateStatus('quotes','${q.id}',this.value)">
+                  ${["Pending","Quoted","Booked","Declined"].map(s =>
+                    `<option${q.status===s?" selected":""}>${s}</option>`).join("")}
+                </select>
+              </td>
+              <td style="font-size:0.75rem;color:#888">${q.submitted}</td>
+            </tr>`).join("")}
+          </tbody>
+        </table>` : "<p style='padding:15px;color:#888'>No quote requests yet.</p>";
+    }
+  }
+}
