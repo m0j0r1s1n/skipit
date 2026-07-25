@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skipGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A00" />
+      <stop offset="100%" stop-color="#E65100" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Dark Rounded Container Background -->
+  <rect width="512" height="512" rx="110" fill="#1A1A1A"/>
+  
+  <!-- Skip Trailer Body -->
+  <path d="M96 180 L140 360 C143 372 154 380 166 380 L346 380 C358 380 369 372 372 360 L416 180 C420 166 410 152 396 152 L116 152 C102 152 92 166 96 180 Z" fill="url(#skipGradient)"/>
+  
+  <!-- Wheel Base Accents (Trailer Vibe) -->
+  <circle cx="180" cy="405" r="28" fill="#FFFFFF"/>
+  <circle cx="180" cy="405" r="14" fill="#1A1A1A"/>
+  
+  <circle cx="332" cy="405" r="28" fill="#FFFFFF"/>
+  <circle cx="332" cy="405" r="14" fill="#1A1A1A"/>
+
+  <!-- Bold "S" Cutout in Center -->
+  <path d="M275 210 C275 198 262 190 246 190 C228 190 216 198 216 210 C216 226 238 232 258 238 C282 245 298 256 298 276 C298 298 276 312 248 312 C222 312 200 298 198 278 L222 278 C224 287 234 294 248 294 C264 294 274 286 274 276 C274 262 254 256 234 250 C210 243 194 232 194 212 C194 190 216 174 246 174 C272 174 292 188 294 210 Z" fill="#FFFFFF"/>
+</svg>
