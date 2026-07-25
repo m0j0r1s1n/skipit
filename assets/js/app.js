@@ -3,9 +3,9 @@ const WA_NUMBER   = "447494110411";   // Your WhatsApp number, no + or spaces
 const ADMIN_PASS  = "n@3tn5Wv@x^qoj";     // Change this password before going live
 
 const RATES = {
-  "Mini Trailer":     40,
-  "Standard Trailer": 60,
-  "Maxi Trailer":     90
+  "Mini Trailer":     140,  // Updated to include full drop, collect & disposal
+  "Standard Trailer": 220,
+  "Maxi Trailer":     310
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -30,8 +30,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ── Tab switching ────────────────────────────────────────────────────────
   window.switchTab = function(tab, btn) {
-    document.getElementById("tab-book").style.display  = tab === "book"  ? "block" : "none";
-    document.getElementById("tab-quote").style.display = tab === "quote" ? "block" : "none";
+    const bookTab  = document.getElementById("tab-book");
+    const quoteTab = document.getElementById("tab-quote");
+    if (bookTab)  bookTab.style.display  = tab === "book"  ? "block" : "none";
+    if (quoteTab) quoteTab.style.display = tab === "quote" ? "block" : "none";
+    
     document.querySelectorAll(".ftab").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
   };
@@ -167,7 +170,8 @@ document.addEventListener("DOMContentLoaded", function () {
   window.handleQuote = function(e) {
     e.preventDefault();
     const btn = document.getElementById("quoteBtn");
-    btn.textContent = "Sending…"; btn.disabled = true;
+    btn.textContent = "Sending…"; 
+    btn.disabled = true;
 
     const form = document.getElementById("quoteForm");
     const fd   = new FormData(form);
@@ -209,7 +213,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const passInput  = document.getElementById("admin-pass");
     const loginError = document.getElementById("login-error");
 
-    // Check session
     if (sessionStorage.getItem("skipit_admin") === "1") {
       showDashboard();
     }
