@@ -2,7 +2,27 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // 1. Password Check API
+    // 1. Sitemap Endpoint for Search Engines
+    if (url.pathname === "/sitemap.xml") {
+      const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://skipit.work/</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`;
+
+      return new Response(xmlContent, {
+        headers: {
+          "Content-Type": "application/xml",
+          "Cache-Control": "max-age=3600"
+        }
+      });
+    }
+
+    // 2. Password Check API
     if (url.pathname === "/api/login" && request.method === "POST") {
       try {
         const { password } = await request.json();
@@ -21,12 +41,12 @@ export default {
       }
     }
 
-    // 2. Add Booking API
+    // 3. Add Booking API
     if (url.pathname === "/api/bookings" && request.method === "POST") {
       try {
         const data = await request.json();
         const fullName = `${data.first_name || ''} ${data.last_name || ''}`.trim();
-        
+
         await env.skipit_db.prepare(
           "INSERT INTO bookings (customer_name, email, booking_date) VALUES (?, ?, ?)"
         )
@@ -39,7 +59,7 @@ export default {
       }
     }
 
-    // 3. Add Quote Request API
+    // 4. Add Quote Request API
     if (url.pathname === "/api/quotes" && request.method === "POST") {
       try {
         const data = await request.json();
@@ -58,7 +78,7 @@ export default {
       }
     }
 
-    // 4. Admin Dashboard Fetch API
+    // 5. Admin Dashboard Fetch API
     if (url.pathname === "/api/admin-data" && request.method === "GET") {
       try {
         const { results: bookings } = await env.skipit_db.prepare("SELECT * FROM bookings ORDER BY id DESC").all();
@@ -73,7 +93,7 @@ export default {
       }
     }
 
-    // Serving static assets
+    // Default static file serving (HTML, CSS, JS, Favicon)
     return env.ASSETS.fetch(request);
   }
 };
