@@ -734,27 +734,26 @@ footer {
 /* ── FORM TABS ──────────────────────────────────────────────────────────── */
 
 .form-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .ftab {
-    flex: 1;
-    padding: 10px;
-    border: 2px solid var(--border);
-    background: white;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.15s;
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .ftab.active {
-    background: var(--orange);
-    border-color: var(--orange);
-    color: white;
+  background: #e66000; /* Your orange theme color */
+  color: #ffffff;
+  border-color: #e66000;
 }
 
 .ftab:hover:not(.active) {

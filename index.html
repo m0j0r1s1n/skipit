@@ -69,7 +69,7 @@ Skip<span>It</span>
 
 <div style="display:flex; gap:10px;">
   <button class="button secondary" onclick="requestQuote()">Get a Quote</button>
-  <a class="button" href="#booking">Book Now</a>
+  <a class="button" href="#booking" onclick="switchTab('book')">Book Now</a>
 </div>
 
 </nav>
@@ -99,7 +99,7 @@ recycling facility.
 
 <div class="hero-buttons">
 
-<a href="#booking" class="button">
+<a href="#booking" onclick="switchTab('book')" class="button">
 Book a Trailer
 </a>
 
@@ -384,8 +384,8 @@ Asbestos, chemicals, liquids, gas bottles, clinical waste or hazardous materials
 
   <!-- TABS -->
   <div class="form-tabs">
-    <button class="ftab active" onclick="switchTab('book', this)">📅 Book a Trailer</button>
-    <button class="ftab" onclick="switchTab('quote', this)">💬 Get a Quote</button>
+    <button class="ftab active" onclick="switchTab('book')">📅 Book a Trailer</button>
+    <button class="ftab" onclick="switchTab('quote')">💬 Get a Quote</button>
   </div>
 
   <!-- BOOKING TAB -->
@@ -659,7 +659,7 @@ hello@skipit.work
 
 
 <p class="copyright">
-© 2026 SkipIt. All rights reserved. &nbsp;&nbsp; <a href="" style="opacity:0.4;font-size:0.8rem"></a>
+© 2026 SkipIt. All rights reserved.
 </p>
 
 </footer>
