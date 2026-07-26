@@ -600,6 +600,38 @@
           <option>Just planning ahead</option>
         </select>
 
+        <label>Package</label>
+        <select id="quoteTrailer" name="quote_package" required onchange="calculateQuoteEstimate()">
+          <option value="">Select package…</option>
+          <option value="Small Load">Small Load — £120</option>
+          <option value="Standard Trailer Skip">Standard Trailer Skip — £150–£175/day</option>
+          <option value="Heavy Waste Package">Heavy Waste Package — £200–£225/day</option>
+          <option value="Trade Account">Trade Account — £350/week</option>
+          <option value="5 Jobs Bundle">5 Jobs Bundle — £750</option>
+        </select>
+
+        <div class="form-row">
+          <div>
+            <label>Preferred Drop-off Date</label>
+            <input type="date" id="quoteStartDate" name="dropoff_date" onchange="calculateQuoteEstimate()" />
+          </div>
+          <div>
+            <label>Preferred Collection Date</label>
+            <input type="date" id="quoteEndDate" name="collection_date" onchange="calculateQuoteEstimate()" />
+          </div>
+        </div>
+
+        <input type="hidden" name="estimated_total" id="hiddenQuoteEstimate" />
+
+        <div class="estimate" id="quoteEstimateBox" style="display:none">
+          <div>
+            <span>Estimated total</span>
+            <small id="quoteEstimateBreak"></small>
+          </div>
+          <strong id="quoteEstimate">£0</strong>
+        </div>
+        <p class="estimate-note" id="quoteEstimateNote" style="display:none">Estimate only — we'll confirm your final price within the hour.</p>
+
         <label>Any other details?</label>
         <textarea name="details" placeholder="Access restrictions, specific items, anything helpful…"></textarea>
 
