@@ -214,6 +214,7 @@
     <p>
       SkipIt delivers a trailer directly to your home, renovation project or business.
       Fill it at your own pace and we collect it, taking the waste to a licensed recycling facility.
+      <br>We also handle simple item collections for single/multiple items being needed taken to the dump.<br>All waste is responsibly recycled and disposed of.
     </p>
 
     <div class="hero-buttons">
@@ -302,6 +303,32 @@
   </div>
 
   <div style="margin-top:45px;">
+    <div class="cards" style="grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; margin-bottom:30px;">
+      <div class="card" style="border:2px dashed var(--orange);">
+        <h3>🧰 Custom SkipIt Trailer Package</h3>
+        <p class="size">Flexible weekly/daily hire for a wide variety of trailer types to suit all waste requirements</p>
+        <h4>Very Competitive and negotiable <span>days/weeks</span></h4>
+        <ul>
+          <li>Choose from a wide range of trailers</li>
+          <li>Weekly hire rates available</li>
+          <li>Great for plant, builders and specialist jobs</li>
+        </ul>
+        <button onclick="chooseTrailer('Custom Trailer Package')">Book Custom Trailer</button>
+      </div>
+
+      <div class="card" style="border:2px dashed var(--orange);">
+        <h3>🪣 Small Dump Run / Very Small Load</h3>
+        <p class="size">Perfect for mini clear-outs, small garden jobs and quick removals</p>
+        <h4>Competitive pricing</h4>
+        <ul>
+          <li>Very competitive rates</li>
+          <li>Ideal for small dump runs</li>
+          <li>To get a price, contact us via booking, quote or WhatsApp</li>
+        </ul>
+        <button onclick="chooseTrailer('Small Dump Run')">Contact for Price</button>
+      </div>
+    </div>
+
     <h3>Weekly contractor deal</h3>
     <p class="intro" style="margin-bottom:30px;">For builders, landscapers and landlords.</p>
 
@@ -425,8 +452,26 @@
           <option value="Small Load">Small Load — £120</option>
           <option value="Standard Trailer Skip">Standard Trailer Skip — £150–£175/day</option>
           <option value="Heavy Waste Package">Heavy Waste Package — £200–£225/day</option>
+          <option value="Custom Trailer Package">Custom Trailer Package — weekly hire</option>
           <option value="Trade Account">Trade Account — £350/week</option>
           <option value="5 Jobs Bundle">5 Jobs Bundle — £750</option>
+          <optgroup label="Custom trailer types">
+            <option value="10' X 5' Trailer">10' X 5' Trailer</option>
+            <option value="Box Trailer Twin Axle">Box Trailer Twin Axle</option>
+            <option value="6' x 4' Heavy Duty Trailer">6' x 4' Heavy Duty Trailer</option>
+            <option value="7' x 4' Trailer c/w Mesh Sides">7' x 4' Trailer c/w Mesh Sides</option>
+            <option value="8' x 5' Trailer">8' x 5' Trailer</option>
+            <option value="8' x 5' Tipping Trailer">8' x 5' Tipping Trailer</option>
+            <option value="10' x 5' Trailer c/w Mesh Sides">10' x 5' Trailer c/w Mesh Sides</option>
+            <option value="12' x 6'6&quot; Tipping Trailer">12' x 6'6&quot; Tipping Trailer</option>
+            <option value="12' x 6'6&quot; Builders Trailer">12' x 6'6&quot; Builders Trailer</option>
+            <option value="14' Tri Axle Trailer">14' Tri Axle Trailer</option>
+            <option value="16' Tri Axle Trailer">16' Tri Axle Trailer</option>
+            <option value="Beaver Tail Trailer">Beaver Tail Trailer</option>
+            <option value="Double Axle Plant Trailer 2700kg">Double Axle Plant Trailer 2700kg</option>
+            <option value="Double Axle Plant Trailer 3500kg">Double Axle Plant Trailer 3500kg</option>
+            <option value="Tri Axle Plant Trailer 3500kg">Tri Axle Plant Trailer 3500kg</option>
+          </optgroup>
         </select>
 
         <label>Delivery Address</label>
