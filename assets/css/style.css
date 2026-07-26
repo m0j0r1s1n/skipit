@@ -1292,8 +1292,8 @@ td a { color: var(--orange); }
 
 .wa-float {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  right: calc(24px + env(safe-area-inset-right));
   z-index: 2147483647;
   background: #25D366;
   color: white;
@@ -1325,6 +1325,8 @@ td a { color: var(--orange); }
   .wa-float {
     padding: 14px;
     border-radius: 50%;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    right: calc(12px + env(safe-area-inset-right));
   }
   .wa-float-label {
     display: none;
