@@ -343,6 +343,8 @@ a {
 
     gap:25px;
 
+    align-items:start;
+
 }
 
 
@@ -354,6 +356,10 @@ a {
 
     border-radius:12px;
 
+    overflow-wrap:anywhere;
+
+    word-break:break-word;
+
 }
 
 
@@ -363,6 +369,12 @@ a {
 
     margin:20px 0;
 
+    line-height:1.1;
+
+    overflow-wrap:anywhere;
+
+    word-break:break-word;
+
 }
 
 
@@ -371,6 +383,8 @@ a {
     font-size:16px;
 
     color:var(--grey);
+
+    display:inline-block;
 
 }
 
@@ -382,12 +396,16 @@ a {
 
     margin-bottom:25px;
 
+    overflow-wrap:anywhere;
+
 }
 
 
 .card li {
 
     margin:10px 0;
+
+    overflow-wrap:anywhere;
 
 }
 
@@ -484,6 +502,8 @@ a {
     padding:20px;
 
     border-radius:8px;
+
+    overflow-wrap:anywhere;
 
 }
 
