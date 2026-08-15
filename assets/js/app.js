@@ -231,6 +231,26 @@ window.handleQuote = async function (event) {
 
 // Admin Dashboard & Session Handler
 document.addEventListener("DOMContentLoaded", () => {
+  const nav = document.getElementById("mainNav");
+  const navToggle = document.querySelector(".nav-toggle");
+  const navLinks = document.querySelector(".nav-links");
+
+  if (nav && navToggle && navLinks) {
+    navToggle.addEventListener("click", () => {
+      const isExpanded = nav.classList.toggle("is-open");
+      navLinks.classList.toggle("is-open", isExpanded);
+      navToggle.setAttribute("aria-expanded", String(isExpanded));
+    });
+
+    navLinks.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        nav.classList.remove("is-open");
+        navLinks.classList.remove("is-open");
+        navToggle.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+
   const loginForm = document.getElementById("login-form");
   const passwordInput = document.getElementById("password-input");
   const loginError = document.getElementById("login-error");

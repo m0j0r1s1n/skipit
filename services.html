@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Property Cleaning & Clearance Services Bangor | SkipIt</title>
+  <meta name="description" content="Power washing, PVC gutter cleaning, reach & rinse window cleaning, dump runs and house clearances across Bangor & North Down. Very competitive rates. Text or call 07858 520151 for a quote.">
+  <meta name="keywords" content="power washing Bangor, gutter cleaning Bangor, window cleaning Bangor, reach and rinse Bangor, dump runs Bangor, house clearances Bangor, property cleaning North Down">
+  <link rel="canonical" href="https://skipit.work/services.html">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SkipIt">
+  <meta property="og:title" content="Property Cleaning & Clearance Services | SkipIt">
+  <meta property="og:description" content="Power washing, gutter cleaning, window cleaning, dump runs and house clearances across Bangor & North Down.">
+  <meta property="og:url" content="https://skipit.work/services.html">
+  <meta property="og:image" content="https://skipit.work/assets/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="assets/css/style.min.css">
+
+  <style>
+    .services-page-hero {
+      min-height: 72vh;
+      padding: 150px 20px 90px;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(232,117,10,.18), transparent 35%),
+        linear-gradient(135deg, #141210 0%, #24211e 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .services-page-hero-inner {
+      max-width: var(--max);
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 55px;
+      align-items: center;
+    }
+
+    .services-page-hero h1 {
+      font-size: clamp(42px, 6vw, 72px);
+      line-height: 1;
+      margin: 18px 0 25px;
+    }
+
+    .services-page-hero h1 span { color: var(--orange); }
+
+    .services-page-hero p {
+      color: #ddd;
+      font-size: 19px;
+      max-width: 700px;
+      margin-bottom: 28px;
+    }
+
+    .service-hero-card {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+
+    .service-hero-card h2 {
+      font-size: 28px;
+      margin-bottom: 18px;
+    }
+
+    .hero-check {
+      display: flex;
+      gap: 12px;
+      margin: 14px 0;
+      color: #eee;
+    }
+
+    .hero-check b {
+      color: var(--orange);
+      font-size: 20px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+    }
+
+    .service-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 32px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.05);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 35px rgba(0,0,0,.09);
+    }
+
+    .service-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(232,117,10,.12);
+      font-size: 28px;
+      margin-bottom: 18px;
+    }
+
+    .service-card h3 {
+      font-size: 25px;
+      margin-bottom: 10px;
+    }
+
+    .service-card p {
+      color: var(--grey);
+      margin-bottom: 16px;
+    }
+
+    .service-card ul {
+      list-style: none;
+      color: #555;
+    }
+
+    .service-card li {
+      margin: 8px 0;
+    }
+
+    .service-card li::before {
+      content: "✓ ";
+      color: var(--orange);
+      font-weight: 900;
+    }
+
+    .service-wide {
+      grid-column: 1 / -1;
+    }
+
+    .skipit-link-panel {
+      margin-top: 45px;
+      padding: 35px;
+      border-radius: 15px;
+      background: var(--dark);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .skipit-link-panel p {
+      color: #ccc;
+      margin-top: 8px;
+      max-width: 700px;
+    }
+
+    .quote-panel {
+      background: linear-gradient(135deg, #fff3e0, #fffaf4);
+      border: 1px solid #f5d2a8;
+      border-radius: 18px;
+      padding: 45px;
+      text-align: center;
+    }
+
+    .quote-panel h2 {
+      font-size: clamp(32px, 5vw, 48px);
+      margin-bottom: 12px;
+    }
+
+    .quote-phone {
+      display: inline-block;
+      font-size: clamp(30px, 5vw, 46px);
+      font-weight: 900;
+      color: var(--orange);
+      margin: 15px 0 22px;
+    }
+
+    .quote-panel p {
+      color: #555;
+      margin: 7px 0;
+    }
+
+    .service-note {
+      margin-top: 25px;
+      font-size: .92rem;
+      color: #666;
+    }
+
+    .areas-strip {
+      text-align: center;
+      padding: 55px 20px;
+      background: var(--dark);
+      color: white;
+    }
+
+    .areas-strip p {
+      color: #bbb;
+      margin-top: 8px;
+    }
+
+    @media(max-width: 900px) {
+      .services-page-hero-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media(max-width: 650px) {
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .service-wide {
+        grid-column: auto;
+      }
+
+      .skipit-link-panel {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .quote-panel {
+        padding: 32px 20px;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Property Cleaning & Clearance Services",
+    "url": "https://skipit.work/services.html",
+    "description": "Property cleaning and clearance services across Bangor and North Down.",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "SkipIt",
+      "url": "https://skipit.work/"
+    },
+    "about": [
+      {
+        "@type": "Service",
+        "name": "Power Washing",
+        "areaServed": ["Bangor", "North Down"]
+      },
+      {
+        "@type": "Service",
+        "name": "PVC Gutter Cleaning",
+        "areaServed": ["Bangor", "North Down"]
+      },
+      {
+        "@type": "Service",
+        "name": "Reach & Rinse Window Cleaning",
+        "areaServed": ["Bangor", "North Down"]
+      },
+      {
+        "@type": "Service",
+        "name": "Dump Runs",
+        "areaServed": ["Bangor", "North Down"]
+      },
+      {
+        "@type": "Service",
+        "name": "House Clearances",
+        "areaServed": ["Bangor", "North Down"]
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+<header class="header">
+  <nav class="nav" id="mainNav">
+    <a class="logo" href="/">Skip<span>It</span></a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="nav-links" id="site-nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#pricing">Trailer Hire</a></li>
+      <li><a href="/services.html" aria-current="page">Property Services</a></li>
+      <li><a href="/#booking">Booking</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a class="button secondary" href="tel:07858520151">Call Us</a>
+      <a class="button" href="#quote">Get a Quote</a>
+    </div>
+  </nav>
+</header>
+
+<section class="services-page-hero">
+  <div class="services-page-hero-inner">
+    <div>
+      <p class="badge">Bangor & North Down • Local Service</p>
+      <h1>Property cleaning & <span>clearance.</span></h1>
+      <p>
+        We offer practical property services for homeowners, landlords, tenants,
+        builders and anyone who needs a property cleaned, cleared or brought back
+        into shape.
+      </p>
+      <div class="hero-buttons">
+        <a class="button" href="#quote">Get a Quote</a>
+        <a class="button secondary" href="tel:07858520151">Text or Call</a>
+      </div>
+    </div>
+
+    <div class="service-hero-card">
+      <h2>Our services</h2>
+      <div class="hero-check"><b>✓</b><span>Power washing</span></div>
+      <div class="hero-check"><b>✓</b><span>PVC gutter cleaning</span></div>
+      <div class="hero-check"><b>✓</b><span>Reach & rinse window cleaning</span></div>
+      <div class="hero-check"><b>✓</b><span>Dump runs</span></div>
+      <div class="hero-check"><b>✓</b><span>House clearances</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>What we can help with</h2>
+  <p class="intro">
+    From cleaning the outside of your property to clearing unwanted items,
+    choose the service you need and contact us for a straightforward quote.
+  </p>
+
+  <div class="services-grid">
+
+    <article class="service-card">
+      <div class="service-icon">💦</div>
+      <h3>Power Washing</h3>
+      <p>Give tired outdoor surfaces a fresh, clean finish.</p>
+      <ul>
+        <li>Driveways</li>
+        <li>Patios and paths</li>
+        <li>Walls and outdoor areas</li>
+        <li>General exterior cleaning</li>
+      </ul>
+    </article>
+
+    <article class="service-card">
+      <div class="service-icon">🏠</div>
+      <h3>PVC Gutter Cleaning</h3>
+      <p>Remove leaves, dirt and debris from PVC guttering.</p>
+      <ul>
+        <li>Gutter debris removal</li>
+        <li>PVC gutter cleaning</li>
+        <li>Reachable areas cleaned safely</li>
+        <li>Ideal for homes and rental properties</li>
+      </ul>
+    </article>
+
+    <article class="service-card">
+      <div class="service-icon">🪟</div>
+      <h3>Reach & Rinse Window Cleaning</h3>
+      <p>Water-fed reach and rinse cleaning for windows and external glass.</p>
+      <ul>
+        <li>Reach & rinse system</li>
+        <li>External window cleaning</li>
+        <li>Hard-to-reach windows</li>
+        <li>Ideal for regular or one-off cleans</li>
+      </ul>
+    </article>
+
+    <article class="service-card">
+      <div class="service-icon">🚚</div>
+      <h3>Dump Runs</h3>
+      <p>Need a few unwanted items taken away? Ask us for a price.</p>
+      <ul>
+        <li>Small loads welcome</li>
+        <li>Furniture and unwanted items</li>
+        <li>Garden and household clear-outs</li>
+        <li>Competitive rates</li>
+      </ul>
+    </article>
+
+    <article class="service-card service-wide">
+      <div class="service-icon">🏡</div>
+      <h3>House Clearances</h3>
+      <p>
+        Full or partial property clearances for homes, landlords, tenants,
+        moves, renovations and general clear-outs.
+      </p>
+      <ul>
+        <li>Full or partial clearances</li>
+        <li>Furniture and unwanted contents</li>
+        <li>General household items</li>
+        <li>Waste removal arranged through SkipIt</li>
+      </ul>
+    </article>
+
+  </div>
+
+  <div class="skipit-link-panel">
+    <div>
+      <h2>Dump runs & house clearances</h2>
+      <p>
+        Waste from these services can be booked and managed through SkipIt's
+        trailer-based waste removal service. SkipIt operates as an Upper Tier
+        Waste Carrier and serves Bangor & North Down and surrounding areas.
+      </p>
+    </div>
+    <a class="button" href="/">Visit SkipIt</a>
+  </div>
+</section>
+
+<section id="quote" class="section">
+  <div class="quote-panel">
+    <h2>Need a price?</h2>
+    <p>Every job is different, so we keep our pricing flexible.</p>
+
+    <a class="quote-phone" href="tel:07858520151">07858 520151</a>
+
+    <p><strong>Text or call for a quote.</strong></p>
+    <p>Very competitive rates • Prices negotiable • All payment forms accepted</p>
+
+    <div style="margin-top:25px;">
+      <a class="button" href="tel:07858520151">Call for a Quote</a>
+    </div>
+
+    <p class="service-note">
+      For dump runs and house clearances, we can arrange waste removal through
+      SkipIt at <a href="https://skipit.work/">skipit.work</a>.
+    </p>
+  </div>
+</section>
+
+<section class="areas-strip">
+  <h2>Serving Bangor & North Down</h2>
+  <p>Bangor • Newtownards • Comber • Donaghadee • North Down and surrounding areas</p>
+</section>
+
+<footer id="contact">
+  <div class="footer-inner">
+    <div>
+      <div class="logo">Skip<span>It</span></div>
+      <p>Property Cleaning & Clearance<br>Bangor & North Down</p>
+      <p style="margin-top:10px;">
+        <a href="mailto:hello@skipit.work">hello@skipit.work</a>
+      </p>
+      <p style="margin-top:6px;">
+        <a href="tel:07858520151">07858 520151</a>
+      </p>
+      <p class="copyright">© 2026 SkipIt. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/447494110411?text=Hi%20SkipIt%2C%20I%27d%20like%20a%20quote%20for%20your%20property%20services."
+   class="wa-float"
+   target="_blank"
+   rel="noopener"
+   aria-label="Chat with SkipIt on WhatsApp">
+  <span style="font-size:22px;">◉</span>
+  <span class="wa-float-label">Chat with us</span>
+</a>
+
+</body>
+</html>

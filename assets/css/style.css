@@ -91,9 +91,20 @@ a {
     display:flex;
     gap:30px;
     list-style:none;
+    margin:0;
+    padding:0;
 
 }
 
+.nav-links li {
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+
+.nav-links li::marker {
+    content: "";
+}
 
 .nav-links a {
 
@@ -109,6 +120,56 @@ a {
 
 }
 
+
+.nav-toggle {
+    display:none;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.35);
+    border-radius:8px;
+    width:44px;
+    height:44px;
+    padding:10px 8px;
+    cursor:pointer;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+    transition:all 0.3s ease;
+}
+
+.nav.is-open .nav-toggle {
+    border-color:rgba(255,255,255,0.6);
+    background:rgba(255,255,255,0.08);
+}
+
+
+.nav-toggle span {
+    display:block;
+    width:18px;
+    height:2px;
+    background:white;
+    border-radius:2px;
+    transition:all 0.3s ease;
+}
+
+.nav.is-open .nav-toggle span:nth-child(2) {
+    opacity:0;
+    transform:scaleX(0);
+}
+
+.nav.is-open .nav-toggle span:nth-child(1) {
+    transform:translateY(8px) rotate(45deg);
+}
+
+.nav.is-open .nav-toggle span:nth-child(3) {
+    transform:translateY(-8px) rotate(-45deg);
+}
+
+
+.nav-actions {
+    display:none;
+    align-items:center;
+    gap:10px;
+}
 
 
 /* BUTTONS */
@@ -745,10 +806,22 @@ footer {
 
 
 
-/* MOBILE */
+/* DESKTOP nav (show actions and links) */
+@media(min-width:601px){
 
+.nav-actions {
+    display:flex;
+}
 
-@media(max-width:900px){
+.nav-links {
+    display:flex;
+}
+
+.nav-toggle {
+    display:none;
+}
+
+}
 
 
 .cards[data-mobile-stack="true"] {
@@ -801,13 +874,76 @@ footer {
 
 @media(max-width:600px){
 
-
-.nav-links {
-
-    display:none;
-
+.nav {
+    min-height:70px;
+    height:auto;
+    flex-wrap:wrap;
+    padding:10px 20px 14px;
 }
 
+.nav-toggle {
+    display:flex;
+    margin-left:auto;
+    width:44px;
+    height:44px;
+    padding:10px 8px;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.35);
+    border-radius:8px;
+    cursor:pointer;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.nav-links {
+    display:none;
+    width:100%;
+    flex-direction:column;
+    gap:12px;
+    padding:0 0 0;
+    order:3;
+    border-top:1px solid rgba(255,255,255,0.18);
+    margin-top:0;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transition:max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+}
+
+.nav-links.is-open {
+    display:flex;
+    max-height:300px;
+    opacity:1;
+    padding:16px 0 6px;
+    margin-top:6px;
+}
+
+.nav-actions {
+    display:none;
+    width:100%;
+    order:4;
+    margin-top:0;
+    gap:10px;
+    opacity:0;
+    max-height:0;
+    overflow:hidden;
+    transition:opacity 0.3s ease, max-height 0.3s ease, margin 0.3s ease;
+}
+
+.nav.is-open .nav-actions {
+    display:flex;
+    opacity:1;
+    max-height:100px;
+    margin-top:8px;
+}
+
+.nav-actions .button,
+.nav-actions .button.secondary {
+    flex:1;
+    text-align:center;
+    white-space:nowrap;
+}
 
 .services {
 

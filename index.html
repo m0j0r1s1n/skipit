@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Trailer Skip Hire Bangor & North Down | SkipIt Waste Removal | No Permit Needed | Competitive Prices</title>
-<meta name="description" content="SkipIt provides affordable trailer skip hire and waste removal across Bangor and North Down. Garden waste, building waste and household clearances collected responsibly."><meta name="keywords" content="trailer hire Bangor, waste removal Bangor, rubble removal Bangor, garden waste Bangor, builder waste Bangor">
+<meta name="description" content="SkipIt provides trailer skip hire, waste removal and property services across Bangor & North Down. Trailer hire, dump runs, house clearances, power washing, gutter cleaning and window cleaning."><meta name="keywords" content="trailer hire Bangor, waste removal Bangor, rubble removal Bangor, garden waste Bangor, builder waste Bangor">
 
 <link rel="canonical" href="https://skipit.work/">
 
@@ -187,19 +187,26 @@
 <body>
 
 <header class="header">
-  <nav class="nav">
+  <nav class="nav" id="mainNav">
     <a class="logo" href="/">
       Skip<span>It</span>
     </a>
 
-    <ul class="nav-links">
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#services">Services</a></li>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="nav-links" id="site-nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="#pricing">Trailer Hire</a></li>
+      <li><a href="/services.html">Property Services</a></li>
       <li><a href="#booking">Booking</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
 
-    <div style="display:flex; gap:10px;">
+    <div class="nav-actions">
       <button class="button secondary" onclick="requestQuote()">Get a Quote</button>
       <a class="button" href="#booking" onclick="switchTab('book')">Book Now</a>
     </div>
@@ -498,7 +505,7 @@
 
 <!-- SERVICES -->
 <section id="services" class="section dark">
-  <h2>What we collect</h2>
+  <h2>Waste Removal Services</h2>
   <div class="services">
     <div>
       <h3>🧱 Building Waste</h3>
@@ -521,6 +528,17 @@
   <div class="warning">
     <strong>Not accepted:</strong>
     Asbestos, chemicals, liquids, gas bottles, clinical waste or hazardous materials.
+  </div>
+
+  <div style="margin-top:35px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:30px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;gap:25px;flex-wrap:wrap;">
+    <div>
+      <h3>Need more than waste removal?</h3>
+      <p style="color:#ccc;margin-top:7px;max-width:700px;">
+        We also offer power washing, PVC gutter cleaning, reach & rinse window cleaning,
+        dump runs and house clearances across Bangor & North Down.
+      </p>
+    </div>
+    <a href="/services.html" class="button">View Property Services</a>
   </div>
 </section>
 
@@ -797,14 +815,14 @@
 
       <div class="footer-brand">
         <div class="logo">Skip<span>It</span></div>
-        <p>SkipIt Trailer Hire<br>Bangor & North Down</p>
+        <p>Trailer Hire & Property Services<br>Bangor & North Down</p>
         <a href="mailto:hello@skipit.work">hello@skipit.work</a>
       </div>
 
       <div class="footer-links">
         <h4>Quick Links</h4>
-        <a href="#pricing">Pricing</a>
-        <a href="#services">Services</a>
+        <a href="#pricing">Trailer Hire</a>
+        <a href="/services.html">Cleaning & Clearance</a>
         <a href="#booking">Book a Trailer</a>
         <a href="#faq">FAQs</a>
       </div>
@@ -883,3 +901,4 @@
 
 </body>
 </html>
+
