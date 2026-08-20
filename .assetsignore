@@ -1,0 +1,8 @@
+.git
+.wrangler
+node_modules
+index.js
+schema.sql
+wrangler.jsonc
+migrations
+.gitignore
