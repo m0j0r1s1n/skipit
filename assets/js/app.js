@@ -157,6 +157,49 @@ window.calculateQuoteEstimate = function () {
 };
 
 // Form Submissions
+async function submitToPrimaryApi(url, payload, form) {
+  let response;
+  let result = {};
+
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    try {
+      result = await response.json();
+    } catch {
+      result = {};
+    }
+  } catch (error) {
+    await sendFormspreeDiagnostic(form);
+    throw new Error("primary_network_failure");
+  }
+
+  if (response.ok && result.success === true) return result;
+
+  if (response.status >= 500) {
+    await sendFormspreeDiagnostic(form);
+  }
+
+  throw new Error(response.status >= 500 ? "primary_server_failure" : "primary_validation_failure");
+}
+
+async function sendFormspreeDiagnostic(form) {
+  try {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: new FormData(form),
+      headers: { Accept: "application/json" }
+    });
+
+    if (!response.ok) console.warn("Diagnostic form notification failed.");
+  } catch {
+    console.warn("Diagnostic form notification could not be sent.");
+  }
+}
+
 window.handleBooking = async function (event) {
   event.preventDefault();
   const form = document.getElementById("bookingForm");
@@ -169,25 +212,13 @@ window.handleBooking = async function (event) {
   const payload = Object.fromEntries(formData.entries());
 
   try {
-    // 1. Submit to D1 via Cloudflare Worker
-    await fetch("/api/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    // 2. Backup post to Formspree
-    fetch(form.action, {
-      method: "POST",
-      body: formData,
-      headers: { Accept: "application/json" }
-    });
+    await submitToPrimaryApi("/api/bookings", payload, form);
 
     if (form) form.style.display = "none";
     if (successBox) successBox.style.display = "block";
   } catch (err) {
     console.error("Booking error:", err);
-    alert("There was an error saving your booking request. Please try again.");
+    alert("We could not confirm your booking request. Please try again or contact us directly.");
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -205,25 +236,13 @@ window.handleQuote = async function (event) {
   const payload = Object.fromEntries(formData.entries());
 
   try {
-    // 1. Submit to D1 via Cloudflare Worker
-    await fetch("/api/quotes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    // 2. Backup post to Formspree
-    fetch(form.action, {
-      method: "POST",
-      body: formData,
-      headers: { Accept: "application/json" }
-    });
+    await submitToPrimaryApi("/api/quotes", payload, form);
 
     if (form) form.style.display = "none";
     if (successBox) successBox.style.display = "block";
   } catch (err) {
     console.error("Quote error:", err);
-    alert("There was an error submitting your quote. Please try again.");
+    alert("We could not confirm your quote request. Please try again or contact us directly.");
   } finally {
     if (btn) btn.disabled = false;
   }

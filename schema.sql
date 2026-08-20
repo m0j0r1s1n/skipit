@@ -3,6 +3,12 @@ CREATE TABLE IF NOT EXISTS bookings (
   customer_name TEXT NOT NULL,
   email TEXT NOT NULL,
   booking_date TEXT NOT NULL,
+  phone TEXT NOT NULL DEFAULT '',
+  trailer TEXT NOT NULL DEFAULT '',
+  address TEXT NOT NULL DEFAULT '',
+  collection_date TEXT NOT NULL DEFAULT '',
+  waste_type TEXT NOT NULL DEFAULT '',
+  estimated_total INTEGER,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -10,6 +16,16 @@ CREATE TABLE IF NOT EXISTS quotes (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   customer_name TEXT NOT NULL,
   details TEXT NOT NULL,
+  email TEXT NOT NULL DEFAULT '',
+  phone TEXT NOT NULL DEFAULT '',
+  address TEXT NOT NULL DEFAULT '',
+  waste_type TEXT NOT NULL DEFAULT '',
+  volume TEXT NOT NULL DEFAULT '',
+  urgency TEXT NOT NULL DEFAULT '',
+  quote_package TEXT NOT NULL DEFAULT '',
+  dropoff_date TEXT NOT NULL DEFAULT '',
+  collection_date TEXT NOT NULL DEFAULT '',
+  estimated_total INTEGER,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

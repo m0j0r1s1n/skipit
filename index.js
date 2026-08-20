@@ -8,6 +8,231 @@ function json(data, status = 200, extraHeaders = {}) {
 const SESSION_COOKIE = "skipit_session";
 const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hours
 const PBKDF2_ITERATIONS = 100000;
+const MAX_PUBLIC_BODY_BYTES = 16 * 1024;
+
+const BOOKING_PACKAGES = [
+  "Small Load",
+  "Standard Trailer Skip",
+  "Heavy Waste Package",
+  "Custom Trailer Package",
+  "Trade Account",
+  "5 Jobs Bundle",
+  "10' X 5' Trailer",
+  "Box Trailer Twin Axle",
+  "6' x 4' Heavy Duty Trailer",
+  "7' x 4' Trailer c/w Mesh Sides",
+  "8' x 5' Trailer",
+  "8' x 5' Tipping Trailer",
+  "10' x 5' Trailer c/w Mesh Sides",
+  "12' x 6'6\" Tipping Trailer",
+  "12' x 6'6\" Builders Trailer",
+  "14' Tri Axle Trailer",
+  "16' Tri Axle Trailer",
+  "Beaver Tail Trailer",
+  "Double Axle Plant Trailer 2700kg",
+  "Double Axle Plant Trailer 3500kg",
+  "Tri Axle Plant Trailer 3500kg"
+];
+
+const QUOTE_PACKAGES = [
+  "Small Load",
+  "Standard Trailer Skip",
+  "Heavy Waste Package",
+  "Trade Account",
+  "5 Jobs Bundle"
+];
+
+const BOOKING_WASTE_TYPES = [
+  "Building rubble",
+  "Garden waste",
+  "House clearance",
+  "Mixed construction waste",
+  "Other"
+];
+
+const QUOTE_WASTE_TYPES = [
+  "Building rubble",
+  "Garden waste",
+  "House clearance",
+  "Mixed construction waste",
+  "Mix of the above",
+  "Not sure yet"
+];
+
+const QUOTE_VOLUMES = [
+  "Small — a car boot's worth",
+  "Medium — a van load",
+  "Large — a full room clearance",
+  "Very large — whole house or site",
+  "Not sure"
+];
+
+const QUOTE_URGENCY = [
+  "As soon as possible",
+  "Within the next week",
+  "Within 2–4 weeks",
+  "Just planning ahead"
+];
+
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validationError(message) {
+  return json({ success: false, message }, 400);
+}
+
+async function readJsonBody(request, allowedKeys) {
+  if (!(request.headers.get("Content-Type") || "").toLowerCase().startsWith("application/json")) {
+    throw new Error("invalid_content_type");
+  }
+
+  const contentLength = Number(request.headers.get("Content-Length"));
+  if (Number.isFinite(contentLength) && contentLength > MAX_PUBLIC_BODY_BYTES) {
+    throw new Error("body_too_large");
+  }
+
+  const body = await request.arrayBuffer();
+  if (body.byteLength > MAX_PUBLIC_BODY_BYTES) throw new Error("body_too_large");
+
+  let data;
+  try {
+    data = JSON.parse(new TextDecoder().decode(body));
+  } catch {
+    throw new Error("invalid_json");
+  }
+
+  if (!data || Array.isArray(data) || typeof data !== "object") {
+    throw new Error("invalid_payload");
+  }
+
+  const unexpected = Object.keys(data).filter(key => !allowedKeys.includes(key));
+  if (unexpected.length > 0) throw new Error("unexpected_field");
+  return data;
+}
+
+function textField(data, name, { required = false, max = 200 } = {}) {
+  const value = data[name];
+  if (value === undefined || value === null || value === "") {
+    if (required) throw new Error(`${name}_required`);
+    return "";
+  }
+  if (typeof value !== "string") throw new Error(`${name}_invalid`);
+  const clean = value.trim();
+  if (!clean && required) throw new Error(`${name}_required`);
+  if (clean.length > max) throw new Error(`${name}_too_long`);
+  return clean;
+}
+
+function oneOf(value, values, { required = false } = {}) {
+  if (!value) {
+    if (required) throw new Error("selection_required");
+    return "";
+  }
+  if (!values.includes(value)) throw new Error("selection_invalid");
+  return value;
+}
+
+function validateEmail(value) {
+  if (value.length > 254 || !EMAIL_PATTERN.test(value)) throw new Error("email_invalid");
+  return value;
+}
+
+function validatePhone(value) {
+  if (value.length < 7 || value.length > 30 || !/^[0-9+()\s-]+$/.test(value)) {
+    throw new Error("phone_invalid");
+  }
+  return value;
+}
+
+function validateDate(value, required = false) {
+  if (!value) {
+    if (required) throw new Error("date_required");
+    return "";
+  }
+  if (typeof value !== "string" || !ISO_DATE_PATTERN.test(value)) throw new Error("date_invalid");
+  const date = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
+    throw new Error("date_invalid");
+  }
+  return value;
+}
+
+function validateDatePair(dropoffDate, collectionDate, required = false) {
+  const dropoff = validateDate(dropoffDate, required);
+  const collection = validateDate(collectionDate, required);
+  if (Boolean(dropoff) !== Boolean(collection)) throw new Error("date_pair_required");
+  if (dropoff && collection && collection < dropoff) throw new Error("date_order_invalid");
+  return { dropoff, collection };
+}
+
+function calculateServerEstimate(packageName, dropoffDate, collectionDate) {
+  let dayCount = 1;
+  if (dropoffDate && collectionDate) {
+    dayCount = Math.floor(
+      (Date.parse(`${collectionDate}T00:00:00Z`) - Date.parse(`${dropoffDate}T00:00:00Z`)) /
+      (24 * 60 * 60 * 1000)
+    ) + 1;
+  }
+
+  if (packageName === "Small Load") return 120 + Math.max(0, dayCount - 1) * 60;
+  if (packageName === "Standard Trailer Skip") return 150 + Math.max(0, dayCount - 1) * 75;
+  if (packageName === "Heavy Waste Package") return 200 + Math.max(0, dayCount - 1) * 100;
+  if (packageName === "Trade Account") return 350;
+  if (packageName === "5 Jobs Bundle") return 750;
+  return null;
+}
+
+function validateBooking(data) {
+  const firstName = textField(data, "first_name", { required: true, max: 80 });
+  const lastName = textField(data, "last_name", { required: true, max: 80 });
+  const phone = validatePhone(textField(data, "phone", { required: true, max: 30 }));
+  const email = validateEmail(textField(data, "email", { required: true, max: 254 }));
+  const trailer = oneOf(textField(data, "trailer", { required: true, max: 80 }), BOOKING_PACKAGES, { required: true });
+  const address = textField(data, "address", { required: true, max: 240 });
+  const dates = validateDatePair(data.dropoff_date, data.collection_date, true);
+  const wasteType = oneOf(textField(data, "waste_type", { max: 80 }), BOOKING_WASTE_TYPES);
+
+  return {
+    customerName: `${firstName} ${lastName}`,
+    phone,
+    email,
+    trailer,
+    address,
+    dropoffDate: dates.dropoff,
+    collectionDate: dates.collection,
+    wasteType,
+    estimatedTotal: calculateServerEstimate(trailer, dates.dropoff, dates.collection)
+  };
+}
+
+function validateQuote(data) {
+  const firstName = textField(data, "first_name", { required: true, max: 80 });
+  const lastName = textField(data, "last_name", { required: true, max: 80 });
+  const phone = validatePhone(textField(data, "phone", { required: true, max: 30 }));
+  const email = validateEmail(textField(data, "email", { required: true, max: 254 }));
+  const address = textField(data, "address", { required: true, max: 240 });
+  const wasteType = oneOf(textField(data, "waste_type", { required: true, max: 80 }), QUOTE_WASTE_TYPES, { required: true });
+  const volume = oneOf(textField(data, "volume", { max: 100 }), QUOTE_VOLUMES);
+  const urgency = oneOf(textField(data, "urgency", { max: 80 }), QUOTE_URGENCY);
+  const packageName = oneOf(textField(data, "quote_package", { required: true, max: 80 }), QUOTE_PACKAGES, { required: true });
+  const dates = validateDatePair(data.dropoff_date, data.collection_date);
+  const details = textField(data, "details", { max: 2000 });
+
+  return {
+    customerName: `${firstName} ${lastName}`,
+    phone,
+    email,
+    address,
+    wasteType,
+    volume,
+    urgency,
+    packageName,
+    dropoffDate: dates.dropoff,
+    collectionDate: dates.collection,
+    estimatedTotal: calculateServerEstimate(packageName, dates.dropoff, dates.collection),
+    details
+  };
+}
 
 function base64urlEncode(bytes) {
   let binary = "";
@@ -199,6 +424,12 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (url.protocol === "http:") {
+      const httpsUrl = new URL(request.url);
+      httpsUrl.protocol = "https:";
+      return Response.redirect(httpsUrl.toString(), 301);
+    }
+
     if (url.pathname === "/sitemap.xml") {
       const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -221,35 +452,74 @@ export default {
     // Public booking API
     if (url.pathname === "/api/bookings" && request.method === "POST") {
       try {
-        const data = await request.json();
-        const fullName = `${data.first_name || ""} ${data.last_name || ""}`.trim();
+        const data = await readJsonBody(request, [
+          "_subject", "form_type", "first_name", "last_name", "phone", "email",
+          "trailer", "address", "dropoff_date", "collection_date", "waste_type", "estimated_total"
+        ]);
+        const booking = validateBooking(data);
 
         await env.skipit_db.prepare(
-          "INSERT INTO bookings (customer_name, email, booking_date) VALUES (?, ?, ?)"
-        ).bind(fullName, data.email || "", data.dropoff_date || "").run();
+          "INSERT INTO bookings (customer_name, email, booking_date, phone, trailer, address, collection_date, waste_type, estimated_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        ).bind(
+          booking.customerName,
+          booking.email,
+          booking.dropoffDate,
+          booking.phone,
+          booking.trailer,
+          booking.address,
+          booking.collectionDate,
+          booking.wasteType,
+          booking.estimatedTotal
+        ).run();
 
         return json({ success: true });
       } catch (e) {
-        return json({ success: false, error: e.message }, 500);
+        if (["invalid_content_type", "body_too_large", "invalid_json", "invalid_payload", "unexpected_field"].includes(e.message)) {
+          return validationError("Please submit a valid booking request.");
+        }
+        if (e.message.endsWith("_required") || e.message.endsWith("_invalid") || e.message.endsWith("_too_long") || e.message === "date_order_invalid" || e.message === "date_pair_required") {
+          return validationError("Please check the booking details and try again.");
+        }
+        return json({ success: false, message: "We could not save your booking request. Please try again." }, 500);
       }
     }
 
     // Public quote API
     if (url.pathname === "/api/quotes" && request.method === "POST") {
       try {
-        const data = await request.json();
-        const fullName = `${data.first_name || ""} ${data.last_name || ""}`.trim();
-        const details =
-          `Address: ${data.address || ""} | Waste: ${data.waste_type || ""} | ` +
-          `Vol: ${data.volume || ""} | Notes: ${data.details || ""}`;
+        const data = await readJsonBody(request, [
+          "_subject", "form_type", "first_name", "last_name", "phone", "email", "address",
+          "waste_type", "volume", "urgency", "quote_package", "dropoff_date", "collection_date",
+          "estimated_total", "details"
+        ]);
+        const quote = validateQuote(data);
 
         await env.skipit_db.prepare(
-          "INSERT INTO quotes (customer_name, details) VALUES (?, ?)"
-        ).bind(fullName, details).run();
+          "INSERT INTO quotes (customer_name, details, email, phone, address, waste_type, volume, urgency, quote_package, dropoff_date, collection_date, estimated_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        ).bind(
+          quote.customerName,
+          quote.details,
+          quote.email,
+          quote.phone,
+          quote.address,
+          quote.wasteType,
+          quote.volume,
+          quote.urgency,
+          quote.packageName,
+          quote.dropoffDate,
+          quote.collectionDate,
+          quote.estimatedTotal
+        ).run();
 
         return json({ success: true });
       } catch (e) {
-        return json({ success: false, error: e.message }, 500);
+        if (["invalid_content_type", "body_too_large", "invalid_json", "invalid_payload", "unexpected_field"].includes(e.message)) {
+          return validationError("Please submit a valid quote request.");
+        }
+        if (e.message.endsWith("_required") || e.message.endsWith("_invalid") || e.message.endsWith("_too_long") || e.message === "date_order_invalid" || e.message === "date_pair_required") {
+          return validationError("Please check the quote details and try again.");
+        }
+        return json({ success: false, message: "We could not save your quote request. Please try again." }, 500);
       }
     }
 
@@ -279,7 +549,7 @@ export default {
           { "Set-Cookie": sessionCookie(token) }
         );
       } catch (e) {
-        return json({ success: false, message: "Login failed.", error: e.message }, 500);
+        return json({ success: false, message: "Login failed." }, 500);
       }
     }
 

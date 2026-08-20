@@ -213,14 +213,20 @@ function renderBookings(bookings) {
 
   $("bookings-table").innerHTML = `
     <table>
-      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Date</th><th>Submitted</th></tr></thead>
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Package</th><th>Address</th><th>Drop-off</th><th>Collection</th><th>Waste</th><th>Estimate</th><th>Submitted</th></tr></thead>
       <tbody>
         ${bookings.map(b => `
           <tr>
             <td><code>#${escapeHtml(b.id)}</code></td>
             <td>${escapeHtml(b.customer_name || "N/A")}</td>
             <td>${escapeHtml(b.email || "N/A")}</td>
+            <td>${escapeHtml(b.phone || "N/A")}</td>
+            <td>${escapeHtml(b.trailer || "N/A")}</td>
+            <td>${escapeHtml(b.address || "N/A")}</td>
             <td>${escapeHtml(b.booking_date || "N/A")}</td>
+            <td>${escapeHtml(b.collection_date || "N/A")}</td>
+            <td>${escapeHtml(b.waste_type || "N/A")}</td>
+            <td>${b.estimated_total == null ? "N/A" : `£${escapeHtml(b.estimated_total)}`}</td>
             <td>${b.created_at ? new Date(b.created_at).toLocaleString() : "N/A"}</td>
           </tr>`).join("")}
       </tbody>
@@ -235,12 +241,22 @@ function renderQuotes(quotes) {
 
   $("quotes-table").innerHTML = `
     <table>
-      <thead><tr><th>ID</th><th>Name</th><th>Details</th><th>Submitted</th></tr></thead>
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Waste</th><th>Volume</th><th>Urgency</th><th>Package</th><th>Drop-off</th><th>Collection</th><th>Estimate</th><th>Details</th><th>Submitted</th></tr></thead>
       <tbody>
         ${quotes.map(q => `
           <tr>
             <td><code>#${escapeHtml(q.id)}</code></td>
             <td>${escapeHtml(q.customer_name || "N/A")}</td>
+            <td>${escapeHtml(q.email || "N/A")}</td>
+            <td>${escapeHtml(q.phone || "N/A")}</td>
+            <td>${escapeHtml(q.address || "N/A")}</td>
+            <td>${escapeHtml(q.waste_type || "N/A")}</td>
+            <td>${escapeHtml(q.volume || "N/A")}</td>
+            <td>${escapeHtml(q.urgency || "N/A")}</td>
+            <td>${escapeHtml(q.quote_package || "N/A")}</td>
+            <td>${escapeHtml(q.dropoff_date || "N/A")}</td>
+            <td>${escapeHtml(q.collection_date || "N/A")}</td>
+            <td>${q.estimated_total == null ? "N/A" : `£${escapeHtml(q.estimated_total)}`}</td>
             <td>${escapeHtml(q.details || "N/A")}</td>
             <td>${q.created_at ? new Date(q.created_at).toLocaleString() : "N/A"}</td>
           </tr>`).join("")}
