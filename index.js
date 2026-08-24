@@ -74,6 +74,12 @@ const QUOTE_URGENCY = [
   "Just planning ahead"
 ];
 
+const DEFAULT_LOADING_SERVICE = "No, I'll load it myself";
+const LOADING_SERVICES = [
+  DEFAULT_LOADING_SERVICE,
+  "Yes, I'd like SkipIt to load it"
+];
+
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -191,6 +197,7 @@ function validateBooking(data) {
   const address = textField(data, "address", { required: true, max: 240 });
   const dates = validateDatePair(data.dropoff_date, data.collection_date, true);
   const wasteType = oneOf(textField(data, "waste_type", { max: 80 }), BOOKING_WASTE_TYPES);
+  const loadingService = oneOf(textField(data, "loading_service", { max: 80 }), LOADING_SERVICES) || DEFAULT_LOADING_SERVICE;
 
   return {
     customerName: `${firstName} ${lastName}`,
@@ -201,8 +208,19 @@ function validateBooking(data) {
     dropoffDate: dates.dropoff,
     collectionDate: dates.collection,
     wasteType,
+    loadingService,
     estimatedTotal: calculateServerEstimate(trailer, dates.dropoff, dates.collection)
   };
+}
+
+async function ensureBookingLoadingColumn(env) {
+  try {
+    await env.skipit_db.prepare("SELECT loading_service FROM bookings LIMIT 1").first();
+  } catch {
+    await env.skipit_db.prepare(
+      "ALTER TABLE bookings ADD COLUMN loading_service TEXT NOT NULL DEFAULT 'No, I''ll load it myself'"
+    ).run();
+  }
 }
 
 function validateQuote(data) {
@@ -430,6 +448,10 @@ export default {
       return Response.redirect(httpsUrl.toString(), 301);
     }
 
+    if (url.pathname === "/services.html") {
+      return Response.redirect(new URL("/services", url).toString(), 301);
+    }
+
     if (url.pathname === "/sitemap.xml") {
       const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -438,6 +460,12 @@ export default {
     <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://skipit.work/services</loc>
+    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>`;
 
@@ -454,12 +482,14 @@ export default {
       try {
         const data = await readJsonBody(request, [
           "_subject", "form_type", "first_name", "last_name", "phone", "email",
-          "trailer", "address", "dropoff_date", "collection_date", "waste_type", "estimated_total"
+          "trailer", "address", "dropoff_date", "collection_date", "waste_type", "loading_service", "estimated_total"
         ]);
         const booking = validateBooking(data);
 
+        await ensureBookingLoadingColumn(env);
+
         await env.skipit_db.prepare(
-          "INSERT INTO bookings (customer_name, email, booking_date, phone, trailer, address, collection_date, waste_type, estimated_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+          "INSERT INTO bookings (customer_name, email, booking_date, phone, trailer, address, collection_date, waste_type, loading_service, estimated_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         ).bind(
           booking.customerName,
           booking.email,
@@ -469,6 +499,7 @@ export default {
           booking.address,
           booking.collectionDate,
           booking.wasteType,
+          booking.loadingService,
           booking.estimatedTotal
         ).run();
 

@@ -41,6 +41,7 @@
   {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    "@id": "https://skipit.work/#business",
     "name": "SkipIt",
     "url": "https://skipit.work",
     "description": "Trailer waste hire and collection service covering Bangor & North Down. Upper Tier waste carrier licensed. No skip permit needed.",
@@ -63,50 +64,10 @@
     ],
     "priceRange": "££",
     "openingHours": "Mo-Su 08:00-18:00",
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Trailer Hire",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "name": "Mini Trailer Hire",
-          "description": "6x4ft trailer, up to 500kg, equivalent to a 2-3 yard skip. Garden waste, light rubble, small clearances.",
-          "price": "140",
-          "priceCurrency": "GBP",
-          "priceSpecification": {
-            "@type": "PriceSpecification",
-            "price": "140",
-            "priceCurrency": "GBP",
-            "valueAddedTaxIncluded": false
-          }
-        },
-        {
-          "@type": "Offer",
-          "name": "Standard Trailer Hire",
-          "description": "8x5ft trailer, up to 1000kg, equivalent to a 4-6 yard skip. Kitchen and bathroom refits, renovation waste.",
-          "price": "220",
-          "priceCurrency": "GBP",
-          "priceSpecification": {
-            "@type": "PriceSpecification",
-            "price": "220",
-            "priceCurrency": "GBP",
-            "valueAddedTaxIncluded": false
-          }
-        },
-        {
-          "@type": "Offer",
-          "name": "Maxi Trailer Hire",
-          "description": "10x6ft trailer, up to 1500kg, equivalent to an 8-10 yard skip. Extensions, demolition waste, large site clearances.",
-          "price": "310",
-          "priceCurrency": "GBP",
-          "priceSpecification": {
-            "@type": "PriceSpecification",
-            "price": "310",
-            "priceCurrency": "GBP",
-            "valueAddedTaxIncluded": false
-          }
-        }
-      ]
+    "identifier": {
+      "@type": "PropertyValue",
+      "propertyID": "NIEA Upper Tier Waste Carrier Registration",
+      "value": "ROC UT 11603"
     }
   },
   {
@@ -115,66 +76,34 @@
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "Do I need a skip permit in Bangor & North Down?",
+        "name": "Do I need a skip permit?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "No. SkipIt trailers are placed on private driveways or private land, so no council permit is required. This saves you £30–£90 compared to placing a traditional skip on a public road."
+          "text": "No. Our trailers are normally placed on private property such as driveways."
         }
       },
       {
         "@type": "Question",
-        "name": "Is SkipIt a licensed waste carrier?",
+        "name": "Are you licensed?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. SkipIt holds an Upper Tier Waste Carrier licence, which legally authorises us to collect, transport and dispose of controlled waste in Northern Ireland. We can provide our licence number on request."
+          "text": "Yes. SkipIt operates under an Upper Tier Waste Carrier licence."
         }
       },
       {
         "@type": "Question",
-        "name": "Are SkipIt prices inclusive of VAT?",
+        "name": "What areas do you cover?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "All advertised prices are exclusive of VAT. VAT at 20% is added to the final invoice. We provide full VAT invoices for trade and business customers."
+          "text": "Bangor & North Down service. Drop us a message for more information on surrounding areas."
         }
       },
       {
         "@type": "Question",
-        "name": "What are the weight limits for trailer hire?",
+        "name": "Where does the waste go?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "The Mini Trailer includes 500kg, the Standard Trailer includes 1,000kg and the Maxi Trailer includes 1,500kg. Excess weight beyond these allowances is charged at £120–£150 per additional tonne. We will advise you if this is likely to apply before confirming your booking."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does SkipIt offer trade accounts for builders and contractors?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. Trade account rates are 15–20% below retail pricing. Customers who sort their waste into single streams (clean inert rubble, green waste) receive additional discounts. Customers placing 5 or more loads per month qualify for an extra 10% discount and 30-day end-of-month credit terms."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What areas does SkipIt cover?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "SkipIt serves Bangor & North Down and surrounding areas including Newtownards, Comber, and Donaghadee, Greater Belfast. If you are unsure whether we cover your area, contact us and we will let you know."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What happens to the waste SkipIt collects?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "All waste is taken to a licensed recycling and waste management facility. We aim to recover and recycle as much material as possible. Waste transfer notes are available on request for customers who require them for compliance purposes."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is there a charge for wait time during trailer drop-off?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "30 to 45 minutes of loading time is included during drop-off at no extra charge. Extended waits beyond this are charged at £1 per minute. This is always agreed with you upfront before any charges are applied."
+          "text": "Waste is taken to licensed recycling and waste facilities."
         }
       }
     ]
@@ -200,7 +129,7 @@
     <ul class="nav-links" id="site-nav">
       <li><a href="/">Home</a></li>
       <li><a href="#pricing">Trailer Hire</a></li>
-      <li><a href="/services.html">Property Services</a></li>
+      <li><a href="/services">Property Services</a></li>
       <li><a href="#booking">Booking</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -566,7 +495,7 @@
         dump runs and house clearances across Bangor & North Down.
       </p>
     </div>
-    <a href="/services.html" class="button">View Property Services</a>
+    <a href="/services" class="button">View Property Services</a>
   </div>
 </section>
 
@@ -863,7 +792,7 @@
       <div class="footer-links">
         <h4>Quick Links</h4>
         <a href="#pricing">Trailer Hire</a>
-        <a href="/services.html">Cleaning & Clearance</a>
+        <a href="/services">Cleaning & Clearance</a>
         <a href="#booking">Book a Trailer</a>
         <a href="#faq">FAQs</a>
       </div>

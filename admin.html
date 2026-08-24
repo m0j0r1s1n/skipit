@@ -213,7 +213,7 @@ function renderBookings(bookings) {
 
   $("bookings-table").innerHTML = `
     <table>
-      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Package</th><th>Address</th><th>Drop-off</th><th>Collection</th><th>Waste</th><th>Estimate</th><th>Submitted</th></tr></thead>
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Package</th><th>Address</th><th>Drop-off</th><th>Collection</th><th>Waste</th><th>Loading</th><th>Estimate</th><th>Submitted</th></tr></thead>
       <tbody>
         ${bookings.map(b => `
           <tr>
@@ -226,6 +226,7 @@ function renderBookings(bookings) {
             <td>${escapeHtml(b.booking_date || "N/A")}</td>
             <td>${escapeHtml(b.collection_date || "N/A")}</td>
             <td>${escapeHtml(b.waste_type || "N/A")}</td>
+            <td>${escapeHtml(b.loading_service || "No, I'll load it myself")}</td>
             <td>${b.estimated_total == null ? "N/A" : `£${escapeHtml(b.estimated_total)}`}</td>
             <td>${b.created_at ? new Date(b.created_at).toLocaleString() : "N/A"}</td>
           </tr>`).join("")}

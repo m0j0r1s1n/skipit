@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   address TEXT NOT NULL DEFAULT '',
   collection_date TEXT NOT NULL DEFAULT '',
   waste_type TEXT NOT NULL DEFAULT '',
+  loading_service TEXT NOT NULL DEFAULT 'No, I''ll load it myself',
   estimated_total INTEGER,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
