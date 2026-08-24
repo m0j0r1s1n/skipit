@@ -244,6 +244,9 @@
       Fill it at your own pace and we collect it, taking the waste to a licensed recycling facility.
       <br>We also handle simple item collections for single/multiple items being needed taken to the dump.<br>All waste is responsibly recycled and disposed of.
     </p>
+    <p class="loading-home-note">
+      <a href="#booking" onclick="switchTab('quote')">Don't want to load it yourself? Optional loading service available. <span aria-hidden="true">→</span></a>
+    </p>
     <p style="margin-top:12px;">
       <a href="#small-loads" style="display:inline-flex; align-items:center; gap:6px; color:var(--orange); font-weight:700; text-decoration:none;">
         See small-load items and pricing <span aria-hidden="true">→</span>
@@ -416,6 +419,15 @@
       </div>
     </div>
   </div>
+
+  <aside class="loading-service" aria-labelledby="loading-service-title">
+    <div>
+      <h3 id="loading-service-title">Optional Loading Service</h3>
+      <p>Don't want to load it yourself? We can do it for you. Ask for a loading quote when booking.</p>
+      <small>Loading is an optional additional service and is not included in the advertised trailer hire price.</small>
+    </div>
+    <a class="button" href="#booking" onclick="switchTab('quote')">Ask about loading</a>
+  </aside>
 </section>
 
 <!-- SMALL LOADS & NEGOTIABLE PRICING -->
@@ -671,6 +683,13 @@
           <option>Mixed construction waste</option>
           <option>Other</option>
         </select>
+
+        <label for="loading-service">Would you like SkipIt to load the trailer?</label>
+        <select id="loading-service" name="loading_service">
+          <option value="No, I'll load it myself">No, I'll load it myself</option>
+          <option value="Yes, I'd like SkipIt to load it">Yes, I'd like SkipIt to load it</option>
+        </select>
+        <small class="form-hint">If you choose loading, we will provide a separate loading quote. No loading price is added automatically.</small>
 
         <input type="hidden" name="estimated_total" id="hiddenEstimate" />
 
