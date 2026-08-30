@@ -442,7 +442,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.protocol === "http:") {
+    if (url.protocol === "http:" && url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {
       const httpsUrl = new URL(request.url);
       httpsUrl.protocol = "https:";
       return Response.redirect(httpsUrl.toString(), 301);
