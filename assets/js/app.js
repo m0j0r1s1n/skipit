@@ -1,6 +1,93 @@
+import { HIRE_DURATIONS, PRICING, calculateConfiguredPrice, formatPrice, pricingForBookingValue } from "../../pricing-config.js";
+
 /**
  * SkipIt Admin & Main Site Frontend Logic
  */
+
+function renderPricingContent() {
+  const cards = document.getElementById("pricingCards");
+  if (!cards) return;
+
+  const sixByFour = PRICING.trailer_6x4;
+  const tenByFive = PRICING.trailer_10x5;
+  const dumpRuns = PRICING.dump_runs;
+  // bookingValue strings (e.g. "6' x 4' ...") contain apostrophes, so they are passed via
+  // data attributes instead of inline onclick="..." to avoid breaking out of the JS string.
+  cards.innerHTML = `
+    <div class="card">
+      <h3>${sixByFour.name}</h3>
+      <p class="size">Ideal for household clear-outs and garden waste</p>
+      <h4>${formatPrice(sixByFour.price_8_hours)} <span>/8 hours</span><br>${formatPrice(sixByFour.price_24_hours)} <span>/24 hours</span></h4>
+      <ul><li>Drop trailer</li><li>Customer fills</li><li>Collection included</li></ul>
+      <button type="button" data-booking-value="${sixByFour.bookingValue}">Book 6 × 4 Trailer</button>
+    </div>
+    <div class="card featured">
+      <div class="tag">Twin axle trailer</div>
+      <h3>${tenByFive.name}</h3>
+      <p class="size">For larger loads and more demanding jobs</p>
+      <h4>${formatPrice(tenByFive.price_8_hours)}</h4>
+      <ul><li>Contact us for availability</li><li>Collection options discussed</li><li>Tailored quote provided</li></ul>
+      <button type="button" data-booking-value="${tenByFive.bookingValue}">Request a Quote</button>
+    </div>
+    <div class="card">
+      <h3>${dumpRuns.name}</h3>
+      <p class="size">Flexible waste removal for homes and small jobs</p>
+      <h4>From ${formatPrice(dumpRuns.starting_price)}</h4>
+      <ul><li>Small and large clearances</li><li>Responsible disposal</li><li>Price confirmed with your details</li></ul>
+      <button type="button" data-booking-value="${dumpRuns.bookingValue}">Book Dump Run</button>
+    </div>`;
+
+  cards.querySelectorAll("[data-booking-value]").forEach(button => {
+    button.addEventListener("click", () => window.chooseTrailer(button.dataset.bookingValue));
+  });
+}
+
+function populatePricingSelects() {
+  const options = Object.values(PRICING).map(pricing => {
+    let label = pricing.name;
+    if (pricing.starting_price !== undefined) {
+      label += ` — From ${formatPrice(pricing.starting_price)}`;
+    } else if (pricing.price_8_hours === null) {
+      label += ` — ${formatPrice(null)}`;
+    } else {
+      label += ` — ${formatPrice(pricing.price_8_hours)} / 8 hours, ${formatPrice(pricing.price_24_hours)} / 24 hours`;
+    }
+    return `<option value="${pricing.bookingValue}">${label}</option>`;
+  }).join("");
+
+  ["trailer", "quoteTrailer"].forEach(id => {
+    const select = document.getElementById(id);
+    if (!select) return;
+    const customGroup = select.querySelector("optgroup");
+    select.innerHTML = `<option value="">Select package…</option>${options}`;
+    if (customGroup && id === "trailer") select.appendChild(customGroup);
+  });
+}
+
+function updateDurationOptions(selectId, trailerId, collectionId) {
+  const durationSelect = document.getElementById(selectId);
+  const trailer = document.getElementById(trailerId)?.value;
+  const pricing = pricingForBookingValue(trailer);
+  if (!durationSelect) return;
+
+  const eightHourLabel = pricing?.price_8_hours === null || pricing?.price_8_hours === undefined
+    ? "8 Hours — Contact us for a quote"
+    : `8 Hours — ${formatPrice(pricing.price_8_hours)}`;
+  const twentyFourHourLabel = pricing?.price_24_hours === null || pricing?.price_24_hours === undefined
+    ? "24 Hours — Contact us for a quote"
+    : `24 Hours — ${formatPrice(pricing.price_24_hours)}`;
+  const selectedDuration = durationSelect.value;
+  durationSelect.innerHTML = `
+    <option value="">Select hire duration…</option>
+    <option value="${HIRE_DURATIONS.EIGHT_HOURS}">${eightHourLabel}</option>
+    <option value="${HIRE_DURATIONS.TWENTY_FOUR_HOURS}">${twentyFourHourLabel}</option>`;
+  durationSelect.value = selectedDuration;
+
+  const collection = document.getElementById(collectionId);
+  if (collection) {
+    collection.required = durationSelect.value !== HIRE_DURATIONS.EIGHT_HOURS;
+  }
+}
 
 // Global UI Navigation Functions
 window.switchTab = function (tab) {
@@ -42,6 +129,7 @@ window.chooseTrailer = function (size) {
 
 window.calculatePrice = function () {
   const trailer = document.getElementById("trailer")?.value;
+  const duration = document.getElementById("hireDuration")?.value;
   const startDate = document.getElementById("startDate")?.value;
   const endDate = document.getElementById("endDate")?.value;
   const estimateBox = document.getElementById("estimateBox");
@@ -50,13 +138,14 @@ window.calculatePrice = function () {
   const breakEl = document.getElementById("estimateBreak");
   const hiddenEstimate = document.getElementById("hiddenEstimate");
 
-  if (!trailer || !startDate || !endDate) {
+  updateDurationOptions("hireDuration", "trailer", "endDate");
+
+  if (!trailer || !duration || !startDate || (duration === HIRE_DURATIONS.TWENTY_FOUR_HOURS && !endDate)) {
     if (estimateBox) estimateBox.style.display = "none";
     if (estimateNote) estimateNote.style.display = "none";
     return;
   }
 
-  let total = 0;
   let packageLabel = "";
   let dayCount = 1;
 
@@ -69,37 +158,34 @@ window.calculatePrice = function () {
     dayCount = diffDays;
   }
 
-  if (trailer.includes("Small")) {
-    total = 120 + Math.max(0, dayCount - 1) * 60;
-    packageLabel = `Small Load — ${dayCount} day${dayCount > 1 ? "s" : ""}`;
-  } else if (trailer.includes("Standard")) {
-    total = 150 + Math.max(0, dayCount - 1) * 75;
-    packageLabel = `Standard Trailer Skip — ${dayCount} day${dayCount > 1 ? "s" : ""} @ £150–£175/day`;
-  } else if (trailer.includes("Heavy")) {
-    total = 200 + Math.max(0, dayCount - 1) * 100;
-    packageLabel = `Heavy Waste Package — ${dayCount} day${dayCount > 1 ? "s" : ""} @ £200–£225/day`;
-  } else if (trailer.includes("Trade")) {
-    total = 350;
-    packageLabel = "Trade Account — weekly rate";
-  } else if (trailer.includes("Jobs")) {
-    total = 750;
-    packageLabel = "5 Jobs Bundle — prepaid";
+  const total = calculateConfiguredPrice(trailer, duration, dayCount);
+  const pricing = pricingForBookingValue(trailer);
+  packageLabel = pricing ? `${pricing.name} — ${duration === HIRE_DURATIONS.EIGHT_HOURS ? "8 hours" : `${dayCount} day${dayCount > 1 ? "s" : ""}`}` : "";
+
+  if (total === null) {
+    if (estimateEl) estimateEl.textContent = "Contact us for a quote";
+    if (breakEl) breakEl.textContent = packageLabel;
+    if (hiddenEstimate) hiddenEstimate.value = "";
+    if (estimateBox) estimateBox.style.display = "flex";
+    if (estimateNote) estimateNote.style.display = "block";
+    return;
   }
 
-  if (!total) {
+  if (pricing === null) {
     if (estimateBox) estimateBox.style.display = "none";
     return;
   }
 
-  if (estimateEl) estimateEl.textContent = `£${total}`;
+  if (estimateEl) estimateEl.textContent = formatPrice(total);
   if (breakEl) breakEl.textContent = packageLabel;
-  if (hiddenEstimate) hiddenEstimate.value = `£${total}`;
+  if (hiddenEstimate) hiddenEstimate.value = formatPrice(total);
   if (estimateBox) estimateBox.style.display = "flex";
   if (estimateNote) estimateNote.style.display = "block";
 };
 
 window.calculateQuoteEstimate = function () {
   const trailer = document.getElementById("quoteTrailer")?.value;
+  const duration = document.getElementById("quoteHireDuration")?.value;
   const startDate = document.getElementById("quoteStartDate")?.value;
   const endDate = document.getElementById("quoteEndDate")?.value;
   const estimateBox = document.getElementById("quoteEstimateBox");
@@ -108,13 +194,14 @@ window.calculateQuoteEstimate = function () {
   const breakEl = document.getElementById("quoteEstimateBreak");
   const hiddenEstimate = document.getElementById("hiddenQuoteEstimate");
 
-  if (!trailer || !startDate || !endDate) {
+  updateDurationOptions("quoteHireDuration", "quoteTrailer", "quoteEndDate");
+
+  if (!trailer || !duration || !startDate || (duration === HIRE_DURATIONS.TWENTY_FOUR_HOURS && !endDate)) {
     if (estimateBox) estimateBox.style.display = "none";
     if (estimateNote) estimateNote.style.display = "none";
     return;
   }
 
-  let total = 0;
   let packageLabel = "";
   let dayCount = 1;
 
@@ -127,31 +214,27 @@ window.calculateQuoteEstimate = function () {
     dayCount = diffDays;
   }
 
-  if (trailer.includes("Small")) {
-    total = 120 + Math.max(0, dayCount - 1) * 60;
-    packageLabel = `Small Load — ${dayCount} day${dayCount > 1 ? "s" : ""}`;
-  } else if (trailer.includes("Standard")) {
-    total = 150 + Math.max(0, dayCount - 1) * 75;
-    packageLabel = `Standard Trailer Skip — ${dayCount} day${dayCount > 1 ? "s" : ""} @ £150–£175/day`;
-  } else if (trailer.includes("Heavy")) {
-    total = 200 + Math.max(0, dayCount - 1) * 100;
-    packageLabel = `Heavy Waste Package — ${dayCount} day${dayCount > 1 ? "s" : ""} @ £200–£225/day`;
-  } else if (trailer.includes("Trade")) {
-    total = 350;
-    packageLabel = "Trade Account — weekly rate";
-  } else if (trailer.includes("Jobs")) {
-    total = 750;
-    packageLabel = "5 Jobs Bundle — prepaid";
+  const total = calculateConfiguredPrice(trailer, duration, dayCount);
+  const pricing = pricingForBookingValue(trailer);
+  packageLabel = pricing ? `${pricing.name} — ${duration === HIRE_DURATIONS.EIGHT_HOURS ? "8 hours" : `${dayCount} day${dayCount > 1 ? "s" : ""}`}` : "";
+
+  if (total === null) {
+    if (estimateEl) estimateEl.textContent = "Contact us for a quote";
+    if (breakEl) breakEl.textContent = packageLabel;
+    if (hiddenEstimate) hiddenEstimate.value = "";
+    if (estimateBox) estimateBox.style.display = "flex";
+    if (estimateNote) estimateNote.style.display = "block";
+    return;
   }
 
-  if (!total) {
+  if (pricing === null) {
     if (estimateBox) estimateBox.style.display = "none";
     return;
   }
 
-  if (estimateEl) estimateEl.textContent = `£${total}`;
+  if (estimateEl) estimateEl.textContent = formatPrice(total);
   if (breakEl) breakEl.textContent = packageLabel;
-  if (hiddenEstimate) hiddenEstimate.value = `£${total}`;
+  if (hiddenEstimate) hiddenEstimate.value = formatPrice(total);
   if (estimateBox) estimateBox.style.display = "flex";
   if (estimateNote) estimateNote.style.display = "block";
 };
@@ -250,6 +333,11 @@ window.handleQuote = async function (event) {
 
 // Admin Dashboard & Session Handler
 document.addEventListener("DOMContentLoaded", () => {
+  renderPricingContent();
+  populatePricingSelects();
+  updateDurationOptions("hireDuration", "trailer", "endDate");
+  updateDurationOptions("quoteHireDuration", "quoteTrailer", "quoteEndDate");
+
   const nav = document.getElementById("mainNav");
   const navToggle = document.querySelector(".nav-toggle");
   const navLinks = document.querySelector(".nav-links");

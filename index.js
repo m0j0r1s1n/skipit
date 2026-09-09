@@ -1,3 +1,5 @@
+import { HIRE_DURATIONS, calculateConfiguredPrice, isSupportedDuration } from "./pricing-config.js";
+
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -11,12 +13,9 @@ const PBKDF2_ITERATIONS = 100000;
 const MAX_PUBLIC_BODY_BYTES = 16 * 1024;
 
 const BOOKING_PACKAGES = [
-  "Small Load",
-  "Standard Trailer Skip",
-  "Heavy Waste Package",
-  "Custom Trailer Package",
-  "Trade Account",
-  "5 Jobs Bundle",
+  "6' x 4' Heavy Duty Trailer",
+  "10' X 5' Trailer",
+  "Dump Runs & House Clearances",
   "10' X 5' Trailer",
   "Box Trailer Twin Axle",
   "6' x 4' Heavy Duty Trailer",
@@ -35,11 +34,9 @@ const BOOKING_PACKAGES = [
 ];
 
 const QUOTE_PACKAGES = [
-  "Small Load",
-  "Standard Trailer Skip",
-  "Heavy Waste Package",
-  "Trade Account",
-  "5 Jobs Bundle"
+  "6' x 4' Heavy Duty Trailer",
+  "10' X 5' Trailer",
+  "Dump Runs & House Clearances"
 ];
 
 const BOOKING_WASTE_TYPES = [
@@ -171,7 +168,7 @@ function validateDatePair(dropoffDate, collectionDate, required = false) {
   return { dropoff, collection };
 }
 
-function calculateServerEstimate(packageName, dropoffDate, collectionDate) {
+function calculateServerEstimate(packageName, duration, dropoffDate, collectionDate) {
   let dayCount = 1;
   if (dropoffDate && collectionDate) {
     dayCount = Math.floor(
@@ -180,12 +177,7 @@ function calculateServerEstimate(packageName, dropoffDate, collectionDate) {
     ) + 1;
   }
 
-  if (packageName === "Small Load") return 120 + Math.max(0, dayCount - 1) * 60;
-  if (packageName === "Standard Trailer Skip") return 150 + Math.max(0, dayCount - 1) * 75;
-  if (packageName === "Heavy Waste Package") return 200 + Math.max(0, dayCount - 1) * 100;
-  if (packageName === "Trade Account") return 350;
-  if (packageName === "5 Jobs Bundle") return 750;
-  return null;
+  return calculateConfiguredPrice(packageName, duration, dayCount);
 }
 
 function validateBooking(data) {
@@ -194,8 +186,14 @@ function validateBooking(data) {
   const phone = validatePhone(textField(data, "phone", { required: true, max: 30 }));
   const email = validateEmail(textField(data, "email", { required: true, max: 254 }));
   const trailer = oneOf(textField(data, "trailer", { required: true, max: 80 }), BOOKING_PACKAGES, { required: true });
+  const duration = textField(data, "hire_duration", { required: true, max: 20 });
+  if (!isSupportedDuration(duration)) throw new Error("duration_invalid");
   const address = textField(data, "address", { required: true, max: 240 });
-  const dates = validateDatePair(data.dropoff_date, data.collection_date, true);
+  const dates = validateDatePair(
+    data.dropoff_date,
+    data.collection_date,
+    duration === HIRE_DURATIONS.TWENTY_FOUR_HOURS
+  );
   const wasteType = oneOf(textField(data, "waste_type", { max: 80 }), BOOKING_WASTE_TYPES);
   const loadingService = oneOf(textField(data, "loading_service", { max: 80 }), LOADING_SERVICES) || DEFAULT_LOADING_SERVICE;
 
@@ -204,12 +202,13 @@ function validateBooking(data) {
     phone,
     email,
     trailer,
+    duration,
     address,
     dropoffDate: dates.dropoff,
     collectionDate: dates.collection,
     wasteType,
     loadingService,
-    estimatedTotal: calculateServerEstimate(trailer, dates.dropoff, dates.collection)
+    estimatedTotal: calculateServerEstimate(trailer, duration, dates.dropoff, dates.collection)
   };
 }
 
@@ -233,7 +232,13 @@ function validateQuote(data) {
   const volume = oneOf(textField(data, "volume", { max: 100 }), QUOTE_VOLUMES);
   const urgency = oneOf(textField(data, "urgency", { max: 80 }), QUOTE_URGENCY);
   const packageName = oneOf(textField(data, "quote_package", { required: true, max: 80 }), QUOTE_PACKAGES, { required: true });
-  const dates = validateDatePair(data.dropoff_date, data.collection_date);
+  const duration = textField(data, "hire_duration", { required: true, max: 20 });
+  if (!isSupportedDuration(duration)) throw new Error("duration_invalid");
+  const dates = validateDatePair(
+    data.dropoff_date,
+    data.collection_date,
+    duration === HIRE_DURATIONS.TWENTY_FOUR_HOURS
+  );
   const details = textField(data, "details", { max: 2000 });
 
   return {
@@ -245,9 +250,10 @@ function validateQuote(data) {
     volume,
     urgency,
     packageName,
+    duration,
     dropoffDate: dates.dropoff,
     collectionDate: dates.collection,
-    estimatedTotal: calculateServerEstimate(packageName, dates.dropoff, dates.collection),
+    estimatedTotal: calculateServerEstimate(packageName, duration, dates.dropoff, dates.collection),
     details
   };
 }
@@ -482,7 +488,7 @@ export default {
       try {
         const data = await readJsonBody(request, [
           "_subject", "form_type", "first_name", "last_name", "phone", "email",
-          "trailer", "address", "dropoff_date", "collection_date", "waste_type", "loading_service", "estimated_total"
+          "trailer", "hire_duration", "address", "dropoff_date", "collection_date", "waste_type", "loading_service", "estimated_total"
         ]);
         const booking = validateBooking(data);
 
@@ -520,7 +526,7 @@ export default {
       try {
         const data = await readJsonBody(request, [
           "_subject", "form_type", "first_name", "last_name", "phone", "email", "address",
-          "waste_type", "volume", "urgency", "quote_package", "dropoff_date", "collection_date",
+          "waste_type", "volume", "urgency", "quote_package", "hire_duration", "dropoff_date", "collection_date",
           "estimated_total", "details"
         ]);
         const quote = validateQuote(data);
