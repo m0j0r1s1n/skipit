@@ -239,6 +239,15 @@ window.calculateQuoteEstimate = function () {
   if (estimateNote) estimateNote.style.display = "block";
 };
 
+// GA4 event tracking (fails safely if gtag/analytics is unavailable; no PII is ever sent)
+function trackEvent(eventName) {
+  try {
+    if (typeof window.gtag === "function") window.gtag("event", eventName);
+  } catch {
+    // ignore analytics errors — must never break site functionality
+  }
+}
+
 // Form Submissions
 async function submitToPrimaryApi(url, payload, form) {
   let response;
@@ -297,6 +306,7 @@ window.handleBooking = async function (event) {
   try {
     await submitToPrimaryApi("/api/bookings", payload, form);
 
+    trackEvent("booking_submit");
     if (form) form.style.display = "none";
     if (successBox) successBox.style.display = "block";
   } catch (err) {
@@ -321,6 +331,7 @@ window.handleQuote = async function (event) {
   try {
     await submitToPrimaryApi("/api/quotes", payload, form);
 
+    trackEvent("generate_lead");
     if (form) form.style.display = "none";
     if (successBox) successBox.style.display = "block";
   } catch (err) {
@@ -337,6 +348,13 @@ document.addEventListener("DOMContentLoaded", () => {
   populatePricingSelects();
   updateDurationOptions("hireDuration", "trailer", "endDate");
   updateDurationOptions("quoteHireDuration", "quoteTrailer", "quoteEndDate");
+
+  // Delegated tracking for phone/WhatsApp CTAs — no phone numbers or message contents are sent
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest('a[href^="tel:"], a[href^="https://wa.me/"]');
+    if (!link) return;
+    trackEvent(link.href.startsWith("tel:") ? "click_phone" : "click_whatsapp");
+  });
 
   const nav = document.getElementById("mainNav");
   const navToggle = document.querySelector(".nav-toggle");
