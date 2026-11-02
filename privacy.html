@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Notice | SkipIt</title>
+  <meta name="description" content="How SkipIt collects and uses your personal information when you book a trailer or request a quote.">
+  <link rel="canonical" href="https://skipit.work/privacy">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <style>
+    body { font: 16px/1.6 system-ui, sans-serif; color: #1a1815; background: #f7f5f1; margin: 0; }
+    main { max-width: 760px; margin: 0 auto; padding: 40px 20px 60px; }
+    h1 { font-size: 32px; margin-top: 0; }
+    h2 { font-size: 20px; margin-top: 32px; }
+    a { color: #b85a00; }
+    button { cursor: pointer; padding: 9px 16px; border-radius: 8px; border: 1px solid #1a1815; background: #fff; font: inherit; }
+  </style>
+</head>
+<body>
+<main>
+  <p><a href="/">&larr; Back to SkipIt</a></p>
+  <h1>Privacy Notice</h1>
+  <p>Last updated: 2 November 2026</p>
+
+  <h2>Who we are</h2>
+  <p>SkipIt provides trailer hire, dump runs, house clearances and property cleaning in Bangor and North Down. You can contact us about your data at <a href="mailto:hello@skipit.work">hello@skipit.work</a>.</p>
+
+  <h2>What we collect</h2>
+  <p>When you submit a booking or quote form we collect your name, phone number, email address, delivery address, dates, type of waste, trailer or service choice and any details you add.</p>
+
+  <h2>Why we use it</h2>
+  <p>We use this information to respond to your enquiry, provide a quote, arrange delivery and collection of a trailer, and meet our legal and accounting obligations.</p>
+
+  <h2>Where it is stored and who processes it</h2>
+  <p>Form submissions are stored in a database hosted on Cloudflare. If our system cannot save a submission, the form content may be sent to our form provider, Formspree, so that we do not lose your enquiry. We do not sell your information.</p>
+
+  <h2>Analytics cookies</h2>
+  <p>We use Google Analytics only if you choose Accept on the cookie notice. If you choose Reject, no analytics cookies are set. You can change your choice below.</p>
+  <p><button type="button" id="reset-consent">Change my cookie choice</button></p>
+
+  <h2>How long we keep it</h2>
+  <p>We keep booking and quote information for as long as needed to handle your enquiry and to meet our legal and accounting obligations.</p>
+
+  <h2>Your rights</h2>
+  <p>You can ask us to access, correct or delete your personal information, or object to how we use it. Contact us at <a href="mailto:hello@skipit.work">hello@skipit.work</a>. You can also complain to the Information Commissioner's Office at <a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>.</p>
+</main>
+<script>
+  document.getElementById("reset-consent").addEventListener("click", function () {
+    try { localStorage.removeItem("skipit_analytics_consent"); } catch (e) {}
+    location.reload();
+  });
+</script>
+<script src="assets/js/consent.js" defer></script>
+</body>
+</html>

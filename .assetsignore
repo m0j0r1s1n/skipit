@@ -6,3 +6,10 @@ schema.sql
 wrangler.jsonc
 migrations
 .gitignore
+package.json
+package-lock.json
+images
+skipit_logo
+skipit_thumbnail.png
+SkipIt_thumbnail_dumpruns.png
+*:Zone.Identifier

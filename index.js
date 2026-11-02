@@ -1,9 +1,45 @@
 import { HIRE_DURATIONS, calculateConfiguredPrice, isSupportedDuration } from "./pricing-config.js";
 
+const GA_HOSTS = "https://www.googletagmanager.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://*.googletagmanager.com";
+
+function securityHeaders(url) {
+  const headers = {
+    "Content-Security-Policy": `default-src 'self'; script-src 'self' 'unsafe-inline' ${GA_HOSTS}; style-src 'self' 'unsafe-inline'; img-src 'self' data: ${GA_HOSTS}; connect-src 'self' https://formspree.io ${GA_HOSTS}; form-action 'self' https://formspree.io; base-uri 'self'; frame-ancestors 'none'; object-src 'none'`,
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=()"
+  };
+
+  if (url?.protocol === "https:") {
+    headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
+  }
+
+  return headers;
+}
+
+// Uses the optional Workers rate-limit bindings; skipped when a binding is absent.
+async function isRateLimited(env, request, bindingName) {
+  const limiter = env[bindingName];
+  if (!limiter) return false;
+  const key = request.headers.get("CF-Connecting-IP") || "unknown";
+  const { success } = await limiter.limit({ key });
+  return !success;
+}
+
+function tooManyRequests() {
+  return json({ success: false, message: "Too many requests. Please try again shortly." }, 429, { "Retry-After": "60" });
+}
+
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json", ...extraHeaders }
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      ...securityHeaders({ protocol: "https:" }),
+      ...extraHeaders
+    }
   });
 }
 
@@ -11,6 +47,7 @@ const SESSION_COOKIE = "skipit_session";
 const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hours
 const PBKDF2_ITERATIONS = 100000;
 const MAX_PUBLIC_BODY_BYTES = 16 * 1024;
+const SITEMAP_LASTMOD = "2026-11-02";
 
 const BOOKING_PACKAGES = [
   "6' x 4' Heavy Duty Trailer",
@@ -481,13 +518,13 @@ export default {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://skipit.work/</loc>
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+    <lastmod>${SITEMAP_LASTMOD}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://skipit.work/services</loc>
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+    <lastmod>${SITEMAP_LASTMOD}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -496,13 +533,16 @@ export default {
       return new Response(xmlContent, {
         headers: {
           "Content-Type": "application/xml",
-          "Cache-Control": "max-age=3600"
+          "Cache-Control": "max-age=3600",
+          ...securityHeaders(url)
         }
       });
     }
 
     // Public booking API
     if (url.pathname === "/api/bookings" && request.method === "POST") {
+      if (await isRateLimited(env, request, "FORM_LIMITER")) return tooManyRequests();
+
       try {
         const data = await readJsonBody(request, [
           "_subject", "form_type", "first_name", "last_name", "phone", "email",
@@ -541,6 +581,8 @@ export default {
 
     // Public quote API
     if (url.pathname === "/api/quotes" && request.method === "POST") {
+      if (await isRateLimited(env, request, "FORM_LIMITER")) return tooManyRequests();
+
       try {
         const data = await readJsonBody(request, [
           "_subject", "form_type", "first_name", "last_name", "phone", "email", "address",
@@ -580,6 +622,8 @@ export default {
 
     // Login
     if (url.pathname === "/api/login" && request.method === "POST") {
+      if (await isRateLimited(env, request, "LOGIN_LIMITER")) return tooManyRequests();
+
       try {
         await bootstrapAdmin(env);
 
@@ -775,6 +819,15 @@ export default {
       }
     }
 
-    return env.ASSETS.fetch(request);
+    const assetResponse = await env.ASSETS.fetch(request);
+    const headers = new Headers(assetResponse.headers);
+    for (const [name, value] of Object.entries(securityHeaders(url))) {
+      headers.set(name, value);
+    }
+    return new Response(assetResponse.body, {
+      status: assetResponse.status,
+      statusText: assetResponse.statusText,
+      headers
+    });
   }
 };

@@ -12,9 +12,14 @@
 	},
 	"secrets": {
 		"required": [
-			"ADMIN_PASSWORD"
+			"ADMIN_PASSWORD",
+			"SESSION_SECRET"
 		]
 	},
+	"ratelimits": [
+		{ "name": "LOGIN_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
+		{ "name": "FORM_LIMITER", "namespace_id": "1002", "simple": { "limit": 5, "period": 60 } }
+	],
 	"d1_databases": [
 		{
 			"binding": "skipit_db",

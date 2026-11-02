@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2FMLZY013F"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-2FMLZY013F');
-  </script>
+  <!-- Analytics loads only after consent -->
+  <script src="assets/js/consent.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -20,13 +14,17 @@
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SkipIt">
-  <meta property="og:title" content="Property Cleaning & Clearance Services | SkipIt">
+  <meta property="og:title" content="Property Cleaning & Clearance Services Bangor | SkipIt">
   <meta property="og:description" content="Power washing, gutter cleaning, window cleaning, dump runs and house clearances across Bangor & North Down.">
   <meta property="og:url" content="https://skipit.work/services">
   <meta property="og:image" content="https://skipit.work/assets/images/skipit-og.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Property Cleaning & Clearance Services Bangor | SkipIt">
+  <meta name="twitter:description" content="Power washing, gutter cleaning, window cleaning, dump runs and house clearances across Bangor & North Down.">
+  <meta name="twitter:image" content="https://skipit.work/assets/images/skipit-og.jpg">
 
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
@@ -474,7 +472,7 @@
       <p style="margin-top:6px;">
         <a href="tel:07858520181">07858 520181</a>
       </p>
-      <p class="copyright">© 2026 SkipIt. All rights reserved.</p>
+      <p class="copyright">© 2026 SkipIt. All rights reserved. <a href="/privacy">Privacy</a></p>
     </div>
 
     <div class="footer-right">
@@ -537,7 +535,7 @@
   <span class="wa-float-label">Chat with us</span>
 </a>
 
-<script src="assets/js/app.js" defer></script>
+<script type="module" src="assets/js/app.js"></script>
 
 </body>
 </html>
