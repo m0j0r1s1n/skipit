@@ -2,9 +2,6 @@
 	"name": "skipit",
 	"main": "index.js",
 	"compatibility_date": "2026-07-25",
-	"vars": {
-		"MAINTENANCE_MODE": "true"
-	},
 	"assets": {
 		"directory": "./",
 		"binding": "ASSETS",
