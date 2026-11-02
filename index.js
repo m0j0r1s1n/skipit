@@ -448,6 +448,24 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (env.MAINTENANCE_MODE === "true") {
+      const maintenancePage = await env.ASSETS.fetch(new Request(new URL("/maintenance.html", url)));
+      return new Response(request.method === "HEAD" ? null : maintenancePage.body, {
+        status: 503,
+        headers: {
+          ...maintenancePage.headers,
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "no-store",
+          "Retry-After": "3600",
+          "X-Robots-Tag": "noindex, nofollow"
+        }
+      });
+    }
+
+    if (url.pathname === "/maintenance.html") {
+      return new Response("Not Found", { status: 404 });
+    }
+
     if (url.protocol === "http:" && url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {
       const httpsUrl = new URL(request.url);
       httpsUrl.protocol = "https:";
