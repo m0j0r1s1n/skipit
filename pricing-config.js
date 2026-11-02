@@ -15,7 +15,7 @@ export const PRICING = Object.freeze({
   dump_runs: Object.freeze({
     name: "Dump Runs & House Clearances",
     bookingValue: "Dump Runs & House Clearances",
-    starting_price: 50
+    starting_price: 25
   })
 });
 
