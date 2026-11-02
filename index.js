@@ -1,16 +1,41 @@
+<<<<<<< HEAD
 import { HIRE_DURATIONS, calculateConfiguredPrice, isSupportedDuration } from "./pricing-config.js";
+=======
+const MAX_API_BODY_BYTES = 16 * 1024;
+
+function securityHeaders(url) {
+  const headers = {
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://formspree.io; form-action 'self' https://formspree.io; base-uri 'self'; frame-ancestors 'none'; object-src 'none'",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=()"
+  };
+
+  if (url?.protocol === "https:") {
+    headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
+  }
+
+  return headers;
+}
+>>>>>>> a6ee9d1 (Fix local Wrangler development and add tooling)
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json", ...extraHeaders }
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      ...securityHeaders(),
+      ...extraHeaders
+    }
   });
 }
 
 const SESSION_COOKIE = "skipit_session";
 const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hours
 const PBKDF2_ITERATIONS = 100000;
-const MAX_PUBLIC_BODY_BYTES = 16 * 1024;
+let bookingLoadingColumnReady;
 
 const BOOKING_PACKAGES = [
   "6' x 4' Heavy Duty Trailer",
@@ -84,18 +109,22 @@ function validationError(message) {
   return json({ success: false, message }, 400);
 }
 
+function isRequestValidationError(error) {
+  return ["invalid_content_type", "body_too_large", "invalid_json", "invalid_payload", "unexpected_field"].includes(error?.message);
+}
+
 async function readJsonBody(request, allowedKeys) {
   if (!(request.headers.get("Content-Type") || "").toLowerCase().startsWith("application/json")) {
     throw new Error("invalid_content_type");
   }
 
   const contentLength = Number(request.headers.get("Content-Length"));
-  if (Number.isFinite(contentLength) && contentLength > MAX_PUBLIC_BODY_BYTES) {
+  if (Number.isFinite(contentLength) && contentLength > MAX_API_BODY_BYTES) {
     throw new Error("body_too_large");
   }
 
   const body = await request.arrayBuffer();
-  if (body.byteLength > MAX_PUBLIC_BODY_BYTES) throw new Error("body_too_large");
+  if (body.byteLength > MAX_API_BODY_BYTES) throw new Error("body_too_large");
 
   let data;
   try {
@@ -108,8 +137,10 @@ async function readJsonBody(request, allowedKeys) {
     throw new Error("invalid_payload");
   }
 
-  const unexpected = Object.keys(data).filter(key => !allowedKeys.includes(key));
-  if (unexpected.length > 0) throw new Error("unexpected_field");
+  if (allowedKeys) {
+    const unexpected = Object.keys(data).filter(key => !allowedKeys.includes(key));
+    if (unexpected.length > 0) throw new Error("unexpected_field");
+  }
   return data;
 }
 
@@ -213,13 +244,23 @@ function validateBooking(data) {
 }
 
 async function ensureBookingLoadingColumn(env) {
-  try {
-    await env.skipit_db.prepare("SELECT loading_service FROM bookings LIMIT 1").first();
-  } catch {
-    await env.skipit_db.prepare(
-      "ALTER TABLE bookings ADD COLUMN loading_service TEXT NOT NULL DEFAULT 'No, I''ll load it myself'"
-    ).run();
+  if (!bookingLoadingColumnReady) {
+    bookingLoadingColumnReady = (async () => {
+      try {
+        await env.skipit_db.prepare("SELECT loading_service FROM bookings LIMIT 1").first();
+      } catch {
+        await env.skipit_db.prepare(
+          "ALTER TABLE bookings ADD COLUMN loading_service TEXT NOT NULL DEFAULT 'No, I''ll load it myself'"
+        ).run();
+      }
+    })();
+
+    bookingLoadingColumnReady.catch(() => {
+      bookingLoadingColumnReady = undefined;
+    });
   }
+
+  return bookingLoadingColumnReady;
 }
 
 function validateQuote(data) {
@@ -496,7 +537,8 @@ export default {
       return new Response(xmlContent, {
         headers: {
           "Content-Type": "application/xml",
-          "Cache-Control": "max-age=3600"
+          "Cache-Control": "max-age=3600",
+          ...securityHeaders(url)
         }
       });
     }
@@ -581,9 +623,8 @@ export default {
     // Login
     if (url.pathname === "/api/login" && request.method === "POST") {
       try {
+        const { username, password } = await readJsonBody(request, ["username", "password"]);
         await bootstrapAdmin(env);
-
-        const { username, password } = await request.json();
         if (!username || !password) {
           return json({ success: false, message: "Username and password are required." }, 400);
         }
@@ -604,6 +645,9 @@ export default {
           { "Set-Cookie": sessionCookie(token) }
         );
       } catch (e) {
+        if (isRequestValidationError(e)) {
+          return validationError("Please submit a valid login request.");
+        }
         return json({ success: false, message: "Login failed." }, 500);
       }
     }
@@ -661,7 +705,7 @@ export default {
       if (auth.error) return auth.error;
 
       try {
-        const { username, password, role } = await request.json();
+        const { username, password, role } = await readJsonBody(request, ["username", "password", "role"]);
         const cleanUsername = String(username || "").trim();
         const cleanRole = role === "staff" ? "staff" : "admin";
 
@@ -681,6 +725,9 @@ export default {
 
         return json({ success: true });
       } catch (e) {
+        if (isRequestValidationError(e)) {
+          return validationError("Please submit a valid user request.");
+        }
         const message = String(e.message || "");
         if (message.toLowerCase().includes("unique")) {
           return json({ success: false, message: "That username already exists." }, 409);
@@ -695,7 +742,7 @@ export default {
       if (auth.error) return auth.error;
 
       try {
-        const { id, role, password } = await request.json();
+        const { id, role, password } = await readJsonBody(request, ["id", "role", "password"]);
         if (!id) return json({ success: false, message: "User ID is required." }, 400);
 
         const target = await env.skipit_db.prepare(
@@ -727,6 +774,9 @@ export default {
 
         return json({ success: true });
       } catch (e) {
+        if (isRequestValidationError(e)) {
+          return validationError("Please submit a valid user request.");
+        }
         return json({ success: false, message: "Could not update user." }, 500);
       }
     }
@@ -737,7 +787,7 @@ export default {
       if (auth.error) return auth.error;
 
       try {
-        const { id } = await request.json();
+        const { id } = await readJsonBody(request, ["id"]);
         const target = await env.skipit_db.prepare(
           "SELECT id, username FROM users WHERE id = ?"
         ).bind(id).first();
@@ -749,7 +799,10 @@ export default {
 
         await env.skipit_db.prepare("DELETE FROM users WHERE id = ?").bind(id).run();
         return json({ success: true });
-      } catch {
+      } catch (e) {
+        if (isRequestValidationError(e)) {
+          return validationError("Please submit a valid user request.");
+        }
         return json({ success: false, message: "Could not delete user." }, 500);
       }
     }
@@ -760,7 +813,7 @@ export default {
       if (auth.error) return auth.error;
 
       try {
-        const { type } = await request.json();
+        const { type } = await readJsonBody(request, ["type"]);
         if (type === "bookings") {
           await env.skipit_db.prepare("DELETE FROM bookings").run();
         } else if (type === "quotes") {
@@ -770,11 +823,23 @@ export default {
         }
 
         return json({ success: true });
-      } catch {
+      } catch (e) {
+        if (isRequestValidationError(e)) {
+          return validationError("Please submit a valid data request.");
+        }
         return json({ success: false, message: "Could not clear data." }, 500);
       }
     }
 
-    return env.ASSETS.fetch(request);
+    const assetResponse = await env.ASSETS.fetch(request);
+    const headers = new Headers(assetResponse.headers);
+    for (const [name, value] of Object.entries(securityHeaders(url))) {
+      headers.set(name, value);
+    }
+    return new Response(assetResponse.body, {
+      status: assetResponse.status,
+      statusText: assetResponse.statusText,
+      headers
+    });
   }
 };
